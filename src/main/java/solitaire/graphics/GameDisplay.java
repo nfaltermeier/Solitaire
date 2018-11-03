@@ -1,6 +1,6 @@
-package solitare.graphics;
+package solitaire.graphics;
 
-import solitare.game.Game;
+import solitaire.game.Game;
 
 import javax.swing.*;
 

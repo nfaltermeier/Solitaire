@@ -1,4 +1,4 @@
-package solitare.graphics;
+package solitaire.graphics;
 
 import java.awt.*;
 

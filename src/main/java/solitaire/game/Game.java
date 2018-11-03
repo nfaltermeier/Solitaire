@@ -1,7 +1,7 @@
-package solitare.game;
+package solitaire.game;
 
 import org.jetbrains.annotations.Nullable;
-import solitare.graphics.IDrawable;
+import solitaire.graphics.IDrawable;
 
 import java.awt.*;
 import java.io.File;

@@ -1,6 +1,6 @@
-package solitare.game;
+package solitaire.game;
 
-import solitare.graphics.IDrawable;
+import solitaire.graphics.IDrawable;
 
 import java.awt.*;
 import java.util.Stack;
