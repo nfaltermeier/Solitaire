@@ -3,10 +3,10 @@ package solitaire.graphics;
 import solitaire.game.Game;
 
 import javax.swing.*;
+import java.awt.*;
 
 public class GameDisplay extends JPanel {
     // Shows all the stacks of cards, the background, and any UI components. The top level GUI component.
-
     private Game game;
 
     public GameDisplay(Game game) {
