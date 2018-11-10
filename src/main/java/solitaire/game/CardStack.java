@@ -59,7 +59,7 @@ public class CardStack implements IDrawable {
     private void solveFlipType(int flipType){
         switch(flipType){
             case FLIPTYPE_TOP:
-                cards.get(cards.size()).setFaceDir(true);
+                cards.get(cards.size() - 1).setFaceDir(true);
                 break;
             case FLIPTYPE_ALL:
                 for(int i=0;i<cards.size();i++) {
