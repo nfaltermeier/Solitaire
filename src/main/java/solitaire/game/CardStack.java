@@ -26,7 +26,6 @@ public class CardStack implements IDrawable {
         this.cards = new Stack<>();
 
         this.flipType = flipType;
-        solveFlipType(flipType);
 
         this.tieredXOffset = 0;
         this.tieredYOffset = 0;
@@ -54,6 +53,7 @@ public class CardStack implements IDrawable {
 
     public void addNewCard(int id){
         this.cards.add(new Card(id));
+        solveFlipType(flipType);
     }
 
     private void solveFlipType(int flipType){

@@ -1,6 +1,5 @@
 package solitaire.game;
 
-import com.sun.xml.internal.ws.api.ResourceLoader;
 import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
