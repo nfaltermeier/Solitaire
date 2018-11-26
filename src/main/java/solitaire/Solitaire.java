@@ -1,5 +1,6 @@
 package solitaire;
 
+<<<<<<< HEAD
 import solitaire.game.Game;
 import solitaire.graphics.GameDisplay;
 
@@ -9,6 +10,9 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import java.awt.GraphicsConfiguration;
+=======
+import solitaire.graphics.ImageLoader;
+>>>>>>> master
 
 public abstract class Solitaire {
     public static void main(String[] args) {
@@ -26,6 +30,9 @@ public abstract class Solitaire {
                 | UnsupportedLookAndFeelException e) {
             System.out.println("An error occurred while setting the GUI display style. Program will continue as normal.");
         }
+
+        String resourceFolderPath = ""; //Make this String be whatever path needed to point to the 'images' folder
+        ImageLoader.init(resourceFolderPath);
 
         startGUI();
     }
