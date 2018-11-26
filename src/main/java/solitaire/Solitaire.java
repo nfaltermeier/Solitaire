@@ -1,8 +1,8 @@
 package solitaire;
 
-<<<<<<< HEAD
 import solitaire.game.Game;
 import solitaire.graphics.GameDisplay;
+import solitaire.graphics.ImageLoader;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -10,9 +10,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import java.awt.GraphicsConfiguration;
-=======
-import solitaire.graphics.ImageLoader;
->>>>>>> master
 
 public abstract class Solitaire {
     public static void main(String[] args) {
