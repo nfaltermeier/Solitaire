@@ -1,15 +1,22 @@
 package solitaire;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import solitaire.game.Game;
 import solitaire.graphics.GameDisplay;
 import solitaire.graphics.ImageLoader;
+import solitaire.graphics.Setup;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import java.awt.GraphicsConfiguration;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -20,7 +27,7 @@ public abstract class Solitaire {
             TODO:
             1. Asynchronously load images
             2. ✓ Set look and feel ✓
-            3. Open menu to start new game / load game (later?)
+            3. ✓ Open menu to start new game / load game ✓
             4. ✓ Open main game GUI (Until saving/loading is implemented) ✓
          */
 
@@ -37,6 +44,38 @@ public abstract class Solitaire {
             ImageLoader.init(resourceFolderPath);
         });
 
+        File save = Setup.showSetupWindow();
+        Game g = null;
+
+        if (save == null) {
+            g = new Game();
+        } else {
+            boolean error = false;
+            String errorMessage = "";
+
+            try {
+                Gson gson = new Gson();
+                g = gson.fromJson(new FileReader(save), Game.class);
+            } catch (FileNotFoundException e) {
+                error = true;
+                errorMessage = "The save file specified could not be loaded. Would you like to begin a new game?";
+            } catch (JsonSyntaxException er) {
+                error = true;
+                errorMessage = "An error occurred while parsing the specified save file. Would you like to begin a new game?";
+            }
+
+            if (error) {
+                int response = JOptionPane.showConfirmDialog(null, errorMessage, "An error has occurred",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+
+                if (response == JOptionPane.YES_OPTION) {
+                    g = new Game();
+                } else {
+                    return;
+                }
+            }
+        }
+
         try {
             while (!imageLoading.isDone()) {
                 Thread.sleep(50);
@@ -45,11 +84,7 @@ public abstract class Solitaire {
             e.printStackTrace();
         }
 
-        startGUI();
-    }
-
-    public static void startGUI() {
-        startGUI(new Game());
+        startGUI(g);
     }
 
     public static void startGUI(Game game) {
