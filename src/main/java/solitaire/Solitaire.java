@@ -10,6 +10,9 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import java.awt.GraphicsConfiguration;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public abstract class Solitaire {
     public static void main(String[] args) {
@@ -28,8 +31,19 @@ public abstract class Solitaire {
             System.out.println("An error occurred while setting the GUI display style. Program will continue as normal.");
         }
 
-        String resourceFolderPath = ""; //Make this String be whatever path needed to point to the 'images' folder
-        ImageLoader.init(resourceFolderPath);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<?> imageLoading = executor.submit(() -> {
+            String resourceFolderPath = "images";
+            ImageLoader.init(resourceFolderPath);
+        });
+
+        try {
+            while (!imageLoading.isDone()) {
+                Thread.sleep(50);
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         startGUI();
     }
@@ -47,13 +61,6 @@ public abstract class Solitaire {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-//        while (!areImagesLoaded()) {
-//            try {
-//                Thread.sleep(50);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
         frame.setVisible(true);
     }
 }
