@@ -19,6 +19,15 @@ public class ImageLoader {
             //Create a BufferedImage for each card's texture
         }
 
+        //Max- Here's how i thought about loading the images into the program
+        // String pngString = ".png";
+        // String ofString = "_of_";
+        // String[] suitNames = {"clubs", "diamonds", "hearts", "spades"};
+       // String[] numberNames = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
+
+       //Change^^  Lets make a function that returns the image based upon the ID of the card
+   
+
         // Create a BufferedImage for the texture of the back of each card
         // Create a BufferedImage for the texture of a stack when it's empty
     }
