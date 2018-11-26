@@ -25,7 +25,7 @@ public class ImageLoader {
         // String[] suitNames = {"clubs", "diamonds", "hearts", "spades"};
        // String[] numberNames = {"2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
 
-       //Change^^  Lets make a function that returns the image based upon the ID of the card
+       //Change^^  Lets make a function that returns the image based upon the ID of the card passed in
    
 
         // Create a BufferedImage for the texture of the back of each card
