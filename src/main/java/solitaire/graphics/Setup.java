@@ -17,7 +17,8 @@ public abstract class Setup {
      * Prevents the program from continuing until the user goes through the window this method opens
      * @return The file representing the save file the game should be started from, or null to start from a new file
      */
-    public static @Nullable File showSetupWindow() {JDialog dialog = new JDialog(null, "Solitaire Setup", Dialog.ModalityType.DOCUMENT_MODAL);
+    public static @Nullable File showSetupWindow() {
+        JDialog dialog = new JDialog(null, "Solitaire Setup", Dialog.ModalityType.DOCUMENT_MODAL);
         JPanel content = new JPanel();
         content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
 
