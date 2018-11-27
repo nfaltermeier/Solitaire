@@ -3,8 +3,7 @@ package solitaire.game;
 import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.Graphics;
 
 public class Card implements IDrawable {
 	public static int SUIT_SPADE = 1;
@@ -13,7 +12,6 @@ public class Card implements IDrawable {
 	public static int SUIT_DIAMOND = 4;
 	
     private boolean isFaceUp;
-    private BufferedImage faceImage;
     private int id;
     private int val;
     private int suit;
@@ -24,14 +22,17 @@ public class Card implements IDrawable {
 		this.val = id%13;
 		this.suit = id/13 + 1;
 
-        this.faceImage = ImageLoader.cardTextures[id];
         this.isFaceUp = false;
 	}
 	
     @Override
     public void draw(Graphics g, int x, int y) {
 	    if(isFaceUp){
-	        g.drawImage(this.faceImage, x, y, null);
+	        /*
+            Caching card images in the card causes problems because game is created before card images are guaranteed
+            to be loaded and may, when the game is saved, cause all the images to be included in the game save
+            */
+            g.drawImage(ImageLoader.cardTextures[id], x, y, null);
         }else{
 	        g.drawImage(ImageLoader.backTexture, x, y, null);
         }
