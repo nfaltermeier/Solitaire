@@ -23,14 +23,6 @@ import java.util.concurrent.Future;
 
 public abstract class Solitaire {
     public static void main(String[] args) {
-        /*
-            TODO:
-            1. Asynchronously load images
-            2. ✓ Set look and feel ✓
-            3. ✓ Open menu to start new game / load game ✓
-            4. ✓ Open main game GUI (Until saving/loading is implemented) ✓
-         */
-
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException
