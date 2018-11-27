@@ -34,6 +34,14 @@ public class ImageLoader {
             e.printStackTrace();
         }
 
+        // Max- Here's how i thought about loading the images into the program
+        String extension = ".png";
+        String bridging = "_of_";
+        String[] suitNames = {"clubs", "diamonds", "hearts", "spades"};
+        String[] numberNames = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
+
+        // Change^^  Lets make a function that returns the image based upon the ID of the card passed in
+
         for(int i = 1; i <= cardTextures.length; i++) {
             //Create a BufferedImage for each card's texture
         }
