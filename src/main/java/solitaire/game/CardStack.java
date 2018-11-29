@@ -3,7 +3,7 @@ package solitaire.game;
 import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.util.Stack;
 
 public class CardStack implements IDrawable {
@@ -13,13 +13,14 @@ public class CardStack implements IDrawable {
 
 
     private Stack<Card> cards;
-    private int cardCount;
 
     // If the lower cards peek out of the stack, otherwise only the top card is visible
 
     private int flipType;
     private int tieredXOffset; // There are the value(s) that the cards will be offset by when they are tiered.
     private int tieredYOffset;
+
+    private Rectangle bounds;
 
 
     public CardStack(int flipType) {
@@ -47,6 +48,7 @@ public class CardStack implements IDrawable {
         } else {
             g.drawImage(ImageLoader.emptySpotTexture, x, y, null);
         }
+        calcBounds(x, y);
     }
 
 
@@ -55,10 +57,10 @@ public class CardStack implements IDrawable {
         solveFlipType(flipType);
     }
 
-    private void solveFlipType(int flipType) {
+    public void solveFlipType(int flipType) {
         switch (flipType) {
             case FLIPTYPE_TOP:
-                for (int i = 0; i < cards.size() - 1; i++) {
+                for (int i = 0; i < cards.size(); i++) {
                     cards.get(i).setFaceDir(false);
                 }
                 cards.get(cards.size() - 1).setFaceDir(true);
@@ -67,8 +69,65 @@ public class CardStack implements IDrawable {
                 for (int i = 0; i < cards.size(); i++) {
                     cards.get(i).setFaceDir(true);
                 }
+                break;
+            case FLIPTYPE_NONE:
+                for (int i = 0; i < cards.size(); i++) {
+                    cards.get(i).setFaceDir(false);
+                }
+                break;
         }
-        //There isn't a case for none because all cards are initialized to be face-down by default
+    }
+
+    private void calcBounds(int x, int y) {
+        int width = (this.tieredXOffset * (Math.max(0, this.getCardCount() - 1))) + ImageLoader.cardTexWidth;
+        int height = (this.tieredYOffset * (Math.max(0, this.getCardCount() - 1))) + ImageLoader.cardTexHeight;
+
+        this.bounds = new Rectangle(x, y, width, height);
+    }
+
+    public boolean inBounds(int x, int y) {
+        boolean b = false;
+        try{
+            b = bounds.contains(x, y);
+        }catch(NullPointerException e){}
+        return b;
+    }
+
+    public int getClickedCardID(int x, int y) {
+        int maxIndex = 0;
+        for (int i = this.getCardCount()-1; i >= 0; i--) {
+            if (this.cards.get(i).inBounds(x, y)) {
+                maxIndex = Math.max(maxIndex, i);
+            }
+        }
+
+        return maxIndex;
+    }
+
+    public CardStack getWholeCardStack(int minIndex, int maxIndex) {
+        //System.out.println("minIndex: " + minIndex + "  maxIndex: " + maxIndex);
+        CardStack newStack = new CardStack(this.flipType);
+        for (int i = minIndex; i < maxIndex; i++) {
+            newStack.addNewCard(this.cards.get(i).getIDNum());
+        }
+
+        return newStack;
+    }
+
+    public void deletePartOfStack(int maxIndex) {
+        for (int i = 0; i < maxIndex; i++) {
+            try{
+                this.cards.remove(i);
+            }catch(ArrayIndexOutOfBoundsException e){}
+        }
+    }
+
+    public Card getCard(int index){
+        return this.cards.get(index);
+    }
+
+    public int getCardCount(){
+        return this.cards.size();
     }
 
 }
