@@ -3,7 +3,7 @@ package solitaire.game;
 import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
-import java.awt.Graphics;
+import java.awt.*;
 
 public class Card implements IDrawable {
 	public static int SUIT_SPADE = 1;
@@ -15,6 +15,9 @@ public class Card implements IDrawable {
     private int id;
     private int val;
     private int suit;
+
+	private int lastX;
+	private int lastY;
 	
 
 	public Card(int id){
@@ -36,6 +39,9 @@ public class Card implements IDrawable {
         }else{
 	        g.drawImage(ImageLoader.backTexture, x, y, null);
         }
+
+        lastX = x;
+	    lastY = y;
     }
 	
 	
@@ -48,8 +54,15 @@ public class Card implements IDrawable {
 		return this.suit;
 	}
 
+	public int getIDNum(){return this.id; }
+
 	public void setFaceDir(boolean isUp){
 	    this.isFaceUp = isUp;
     }
-	
+
+	public boolean inBounds(int x, int y){
+		Rectangle bounds = new Rectangle(lastX, lastY, ImageLoader.cardTexWidth, ImageLoader.cardTexHeight);
+		return bounds.contains(x, y);
+	}
+
 }

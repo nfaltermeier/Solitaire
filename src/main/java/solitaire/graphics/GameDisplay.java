@@ -30,6 +30,7 @@ public class GameDisplay extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Clicked at (" + e.getX() + ", " + e.getY() + ")");
+                game.onClick(e.getX(), e.getY(), gameDisplay);
             }
         });
         add(gameDisplay);

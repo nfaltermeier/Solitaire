@@ -1,8 +1,10 @@
 package solitaire.game;
 
 import org.jetbrains.annotations.Nullable;
+import solitaire.graphics.GameDisplay;
 import solitaire.graphics.IDrawable;
 
+import javax.swing.*;
 import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
@@ -18,6 +20,9 @@ public class Game implements IDrawable {
 
     private int mainPileYOffset; //Set this with graphics stuff
     private int displayStockXOffset; //Set this with graphics stuff
+
+    private CardStack highlightedStack;
+    private int lastHighlightedStackID;
 
 
     @Nullable
@@ -49,6 +54,9 @@ public class Game implements IDrawable {
     }
 
     public void initNewGame() {
+        highlightedStack = null;
+        lastHighlightedStackID = -1;
+
         foundationStacks = new CardStack[4];
         mainPiles = new CardStack[7];
 
@@ -83,6 +91,38 @@ public class Game implements IDrawable {
         }
 
 
+    }
+
+    public CardStack getSelectedCardstack(int clickedX, int clickedY){
+        //Check through all main piles, use an individual card version for the display stock pile
+        CardStack highlightedStack = null;
+
+        for(int i=0;i<mainPiles.length;i++){
+            if(mainPiles[i].inBounds(clickedX, clickedY)){
+                int minCardID = mainPiles[i].getClickedCardID(clickedX, clickedY);
+                highlightedStack = mainPiles[i].getWholeCardStack(minCardID, mainPiles[i].getCardCount()-1);
+                lastHighlightedStackID = i;
+                //mainPiles[i].deletePartOfStack(minCardID);
+            }
+        }
+
+        if(highlightedStack == null){
+            if(displayStock.inBounds(clickedX, clickedY)){
+                if(displayStock.getCardCount() > 2){
+                    if(displayStock.getCard(2).inBounds(clickedX, clickedY)){
+                        highlightedStack = displayStock.getWholeCardStack(2, 2);
+                    }
+                }
+            }
+        }
+
+
+        return highlightedStack;
+    }
+
+    public void onClick(int x, int y, JPanel gd){
+        highlightedStack = getSelectedCardstack(x, y);
+        gd.repaint();
     }
 
 }
