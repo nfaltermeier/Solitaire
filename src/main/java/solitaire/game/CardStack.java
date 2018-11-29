@@ -133,11 +133,4 @@ public class CardStack implements IDrawable {
     public int getCardCount(){
         return this.cards.size();
     }
-
-    public Stack<Card> getCards(){
-        return this.cards;
-    }
-
-
-
 }

@@ -111,12 +111,6 @@ public class Game implements IDrawable {
             if(mainPiles[i].inBounds(clickedX, clickedY)){
                 int minCardID = mainPiles[i].getClickedCardID(clickedX, clickedY);
                 highlightedStack = mainPiles[i].getWholeCardStack(minCardID, mainPiles[i].getCardCount()-1);
-
-                for(Card c : highlightedStack.getCards()){
-                    System.out.print(c);
-                }
-                System.out.println();
-
                 lastHighlightedStackID = i;
             }
         }
