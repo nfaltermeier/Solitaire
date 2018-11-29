@@ -60,7 +60,7 @@ public class CardStack implements IDrawable {
     public void solveFlipType(int flipType) {
         switch (flipType) {
             case FLIPTYPE_TOP:
-                for (int i = 0; i < cards.size(); i++) {
+                for (int i = 0; i < cards.size() - 1; i++) {
                     cards.get(i).setFaceDir(false);
                 }
                 cards.get(cards.size() - 1).setFaceDir(true);
@@ -86,11 +86,7 @@ public class CardStack implements IDrawable {
     }
 
     public boolean inBounds(int x, int y) {
-        boolean b = false;
-        try{
-            b = bounds.contains(x, y);
-        }catch(NullPointerException e){}
-        return b;
+        return bounds.contains(x, y);
     }
 
     public int getClickedCardID(int x, int y) {
@@ -116,9 +112,7 @@ public class CardStack implements IDrawable {
 
     public void deletePartOfStack(int maxIndex) {
         for (int i = 0; i < maxIndex; i++) {
-            try{
-                this.cards.remove(i);
-            }catch(ArrayIndexOutOfBoundsException e){}
+            this.cards.remove(i);
         }
     }
 
