@@ -95,7 +95,7 @@ public class Game implements IDrawable {
 
     public void cycleDisplyStockPile(){
 
-        //displayStock.deletePartOfStack();
+      
 
     }
 
