@@ -13,14 +13,12 @@ public class ImageLoader {
     public static BufferedImage backTexture; //This is the texture of the back of a card
     public static BufferedImage emptySpotTexture; //This is the texture of a stack when it's empty
 
-    public static int cardTexWidth;
-    public static int cardTexHeight;
+    public static final int cardTexWidth = 100;
+    public static final int cardTexHeight = 145;
 
 
     public static void init(String resFolderPath){
         cardTextures = new BufferedImage[52];
-        cardTexWidth = 100; //2.5 * 16
-        cardTexHeight = 145; //3.5 * 16
 
         ClassLoader cl = ClassLoader.getSystemClassLoader();
 
