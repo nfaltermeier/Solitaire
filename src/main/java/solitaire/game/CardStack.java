@@ -124,4 +124,13 @@ public class CardStack implements IDrawable {
         return this.cards.size();
     }
 
+    public int getLastCardValue(){
+
+        int val = 0;
+        if (cards.size() > 0) {
+             val = cards.get(cards.size() - 1).getVal();
+        }
+        return val;
+    }
+
 }

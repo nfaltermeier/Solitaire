@@ -93,6 +93,17 @@ public class Game implements IDrawable {
 
     }
 
+    public boolean hasWon(){
+        boolean won = true;
+            for(int i = 0; i < foundationStacks.length; i++){
+                int val = foundationStacks[i].getLastCardValue();
+                if (val != 12){
+                    won = false;
+                }
+            }
+        return won;
+    }
+
     public CardStack getSelectedCardstack(int clickedX, int clickedY){
         //Check through all main piles, use an individual card version for the display stock pile
         CardStack highlightedStack = null;
