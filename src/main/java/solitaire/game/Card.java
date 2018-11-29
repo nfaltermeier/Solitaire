@@ -65,4 +65,16 @@ public class Card implements IDrawable {
 		return bounds.contains(x, y);
 	}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Card)) return false;
+        Card card = (Card) o;
+        return id == card.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 }

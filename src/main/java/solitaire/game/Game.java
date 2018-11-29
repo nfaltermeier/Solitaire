@@ -1,6 +1,7 @@
 package solitaire.game;
 
 import org.jetbrains.annotations.Nullable;
+import solitaire.Solitaire;
 import solitaire.graphics.GameDisplay;
 import solitaire.graphics.IDrawable;
 
@@ -27,16 +28,21 @@ public class Game implements IDrawable {
 
     @Nullable
     private File loadedFrom;
+    private Solitaire solitaire;
 
-
-    public Game() {
+    public Game(Solitaire solitaire) {
         loadedFrom = null;
+        this.solitaire = solitaire;
         //Add more here later, for now it always initializes a new game
         initNewGame();
     }
 
     public void setLoadedFrom(@Nullable File loadedFrom) {
         this.loadedFrom = loadedFrom;
+    }
+
+    public void setSolitaire(Solitaire solitaire) {
+        this.solitaire = solitaire;
     }
 
     @Override
@@ -62,7 +68,7 @@ public class Game implements IDrawable {
 
         //Creates a list of cards to be distributed into the different piles
         ArrayList<Integer> remainingCards = new ArrayList<>();
-        for (int i = 1; i <= 52; i++) {
+        for (int i = 0; i < 52; i++) {
             remainingCards.add(i);
         }
 
@@ -125,4 +131,19 @@ public class Game implements IDrawable {
         gd.repaint();
     }
 
+    private void onGameWon() {
+        int response = JOptionPane.showConfirmDialog(null,
+                "Congratulations! You won! Would you like to start a new game?", "You won!",
+                JOptionPane.YES_NO_OPTION);
+
+        if (response == JOptionPane.YES_OPTION) {
+            startNewGame();
+        } else {
+            solitaire.killDisplay();
+        }
+    }
+
+    public void startNewGame() {
+        solitaire.displayGame(new Game(solitaire));
+    }
 }

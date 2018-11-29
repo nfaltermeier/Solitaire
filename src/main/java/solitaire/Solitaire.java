@@ -21,7 +21,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-public abstract class Solitaire {
+public class Solitaire {
+    private JFrame frame;
+
     public static void main(String[] args) {
         try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -37,10 +39,11 @@ public abstract class Solitaire {
         });
 
         File save = Setup.showSetupWindow();
+        Solitaire s = new Solitaire();
         Game g = null;
 
         if (save == null) {
-            g = new Game();
+            g = new Game(s);
         } else {
             boolean error = false;
             String errorMessage = "";
@@ -49,6 +52,7 @@ public abstract class Solitaire {
                 Gson gson = new Gson();
                 g = gson.fromJson(new FileReader(save), Game.class);
                 g.setLoadedFrom(save);
+                g.setSolitaire(s);
             } catch (FileNotFoundException e) {
                 error = true;
                 errorMessage = "The save file specified could not be loaded. Would you like to begin a new game?";
@@ -62,7 +66,7 @@ public abstract class Solitaire {
                         JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
 
                 if (response == JOptionPane.YES_OPTION) {
-                    g = new Game();
+                    g = new Game(s);
                 } else {
                     return;
                 }
@@ -77,18 +81,33 @@ public abstract class Solitaire {
             e.printStackTrace();
         }
 
-        startGUI(g);
+        s.displayGame(g);
     }
 
-    public static void startGUI(Game game) {
-        JFrame frame = new JFrame((GraphicsConfiguration) null);
+    public void displayGame(Game game) {
+        boolean createNewFrame = frame == null;
+        if (createNewFrame) {
+            frame = new JFrame((GraphicsConfiguration) null);
+            frame.setResizable(false);
+            frame.setTitle("Solitaire");
+            frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        } else {
+            frame.getContentPane().removeAll();
+        }
+
         JPanel panel = new GameDisplay(game);
         frame.add(panel);
-        frame.setTitle("Solitaire");
-        frame.pack();
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+
+        if (createNewFrame) {
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+        } else {
+            frame.revalidate();
+        }
+    }
+
+    public void killDisplay() {
+        frame.dispose();
     }
 }

@@ -2,10 +2,14 @@ package solitaire.graphics;
 
 import solitaire.game.Game;
 
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -15,6 +19,25 @@ public class GameDisplay extends JPanel {
 
     public GameDisplay(Game game) {
         this.game = game;
+
+        setLayout(new BorderLayout());
+
+        JPanel toolbarContainer = new JPanel();
+        add(toolbarContainer, BorderLayout.WEST);
+
+        JButton newGame = new JButton("New Game");
+        newGame.addActionListener((ActionEvent e) -> {
+            int response = JOptionPane.showConfirmDialog(null,
+                    "Are you sure you would like to start a new game?", "Are you sure?",
+                    JOptionPane.YES_NO_CANCEL_OPTION);
+
+            if (response == JOptionPane.YES_OPTION) {
+                game.startNewGame();
+            }
+        });
+        toolbarContainer.add(newGame);
+
+        toolbarContainer.add(new Timer());
 
         JPanel gameDisplay = new JPanel() {
             @Override
@@ -33,6 +56,6 @@ public class GameDisplay extends JPanel {
                 game.onClick(e.getX(), e.getY(), gameDisplay);
             }
         });
-        add(gameDisplay);
+        add(gameDisplay, BorderLayout.SOUTH);
     }
 }
