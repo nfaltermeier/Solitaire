@@ -62,7 +62,7 @@ public class Game implements IDrawable {
 
         //Creates a list of cards to be distributed into the different piles
         ArrayList<Integer> remainingCards = new ArrayList<>();
-        for (int i = 1; i <= 52; i++) {
+        for (int i = 0; i < 52; i++) {
             remainingCards.add(i);
         }
 
