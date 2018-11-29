@@ -93,6 +93,12 @@ public class Game implements IDrawable {
 
     }
 
+    public void cycleDisplyStockPile(){
+
+        //displayStock.deletePartOfStack();
+
+    }
+
     public boolean hasWon(){
         boolean won = true;
             for(int i = 0; i < foundationStacks.length; i++){

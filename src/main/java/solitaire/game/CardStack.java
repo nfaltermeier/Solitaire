@@ -49,6 +49,22 @@ public class CardStack implements IDrawable {
             g.drawImage(ImageLoader.emptySpotTexture, x, y, null);
         }
         calcBounds(x, y);
+
+    }
+
+    //This function returns the next card in the stack after comparing it to the last card into the stack passed in.
+    public Card getNextCard(CardStack s){
+        Card lastCard = s.getCard(s.cards.size() - 1);
+        for (int i = 0; i < this.cards.size(); i++){
+            if (lastCard.getIDNum() == this.cards.get(i).getIDNum()){
+                if (i == this.cards.size() - 1){
+                    return this.cards.get(0);
+                } else {
+                    return this.cards.get(i+1);
+                }
+            }
+        }
+        return null;
     }
 
 
