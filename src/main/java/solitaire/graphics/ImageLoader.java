@@ -12,6 +12,7 @@ public class ImageLoader {
     public static BufferedImage[] cardTextures;
     public static BufferedImage backTexture; //This is the texture of the back of a card
     public static BufferedImage emptySpotTexture; //This is the texture of a stack when it's empty
+    public static BufferedImage highlightTexture; //This is the texture of the highlight overlay on selected CardStacks
 
     public static final int cardTexWidth = 100;
     public static final int cardTexHeight = 145;
@@ -27,6 +28,9 @@ public class ImageLoader {
 
         filepath = resFolderPath + "/back.png";
         backTexture = readImage(filepath, cl);
+
+        filepath = resFolderPath + "/highlight.png";
+        highlightTexture = readImage(filepath, cl);
 
         String extension = ".png";
         String bridging = "_of_";
