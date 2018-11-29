@@ -4,6 +4,7 @@ import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class Card implements IDrawable {
 	public static int SUIT_SPADE = 1;
@@ -16,8 +17,8 @@ public class Card implements IDrawable {
     private int val;
     private int suit;
 
-	private int lastX;
-	private int lastY;
+	public int lastX;
+	public int lastY;
 	
 
 	public Card(int id){
@@ -65,4 +66,18 @@ public class Card implements IDrawable {
 		return bounds.contains(x, y);
 	}
 
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Card)) return false;
+        Card card = (Card) o;
+        return id == card.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
