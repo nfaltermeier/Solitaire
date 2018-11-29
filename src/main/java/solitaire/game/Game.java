@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 import solitaire.Solitaire;
 import solitaire.graphics.GameDisplay;
 import solitaire.graphics.IDrawable;
+import solitaire.graphics.ImageLoader;
 
 import javax.swing.*;
 import java.awt.Graphics;
@@ -57,6 +58,15 @@ public class Game implements IDrawable {
         for (int i = 0; i < foundationStacks.length; i++) {
             foundationStacks[i].draw(g, x + 1060, y + 40 + i * 165);
         }
+
+        if(highlightedStack != null){
+            for(int i=0;i<highlightedStack.getCardCount();i++){
+                g.drawImage(ImageLoader.highlightTexture, highlightedStack.getCard(i).lastX,
+                        highlightedStack.getCard(i).lastY, ImageLoader.cardTexWidth,
+                        ImageLoader.cardTexHeight, null, null);
+            }
+        }
+
     }
 
     public void initNewGame() {
@@ -108,7 +118,6 @@ public class Game implements IDrawable {
                 int minCardID = mainPiles[i].getClickedCardID(clickedX, clickedY);
                 highlightedStack = mainPiles[i].getWholeCardStack(minCardID, mainPiles[i].getCardCount()-1);
                 lastHighlightedStackID = i;
-                //mainPiles[i].deletePartOfStack(minCardID);
             }
         }
 
@@ -117,6 +126,7 @@ public class Game implements IDrawable {
                 if(displayStock.getCardCount() > 2){
                     if(displayStock.getCard(2).inBounds(clickedX, clickedY)){
                         highlightedStack = displayStock.getWholeCardStack(2, 2);
+                        lastHighlightedStackID = 99;
                     }
                 }
             }
@@ -126,8 +136,40 @@ public class Game implements IDrawable {
         return highlightedStack;
     }
 
+    private int getStackID(int clickedX, int clickedY){
+        int id = -1;
+
+        for(int i=0;i<mainPiles.length;i++){
+            if(mainPiles[i].inBounds(clickedX, clickedY)){
+                id = i;
+            }
+        }
+
+        if(id == -1){
+            if(displayStock.inBounds(clickedX, clickedY)){
+                id = 99;
+            }
+        }
+
+        return id;
+    }
+
     public void onClick(int x, int y, JPanel gd){
-        highlightedStack = getSelectedCardstack(x, y);
+        if(highlightedStack == null){
+            highlightedStack = getSelectedCardstack(x, y);
+        }else{
+            CardStack refStack = null;
+            int refStackID = getStackID(x, y);
+            if(refStackID == 99){
+                internalStackMove(displayStock);
+            }else{
+                if(refStackID != -1){
+                    internalStackMove(mainPiles[refStackID]);
+                }
+            }
+
+        }
+
         gd.repaint();
     }
 
@@ -145,5 +187,43 @@ public class Game implements IDrawable {
 
     public void startNewGame() {
         solitaire.displayGame(new Game(solitaire));
+    }
+
+    private void internalStackMove(CardStack refStack){
+        if(highlightedStack.getCardCount() > 0 && refStack.getCardCount() > 0){
+            if(canMoveStack(highlightedStack, refStack)){
+                refStack.appendStack(highlightedStack);
+
+                if(lastHighlightedStackID == 99){
+                    displayStock.deletePartOfStack(highlightedStack);
+                }else{
+                    mainPiles[lastHighlightedStackID].deletePartOfStack(highlightedStack);
+                }
+
+                highlightedStack = null;
+            }else{
+                highlightedStack = null;
+            }
+        }
+    }
+
+    public boolean canMoveStack(CardStack movedStack, CardStack placedStack){
+        boolean b = false;
+
+        Card destCard = placedStack.getCard(placedStack.getCardCount()-1);
+        Card attemptCard = movedStack.getCard(0);
+
+        if(destCard.getVal() == (attemptCard.getVal()+1)){
+            int suitCombo = destCard.getSuit() + attemptCard.getSuit();
+            /*if(suitCombo != 3 && suitCombo != 7  && (destCard.getSuit() != attemptCard.getSuit())){
+                b = true;
+            }else{
+                b = false;
+            }*/
+
+            b = true; //Disabling suit checking for testing purposes
+        }
+
+        return b;
     }
 }

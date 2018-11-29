@@ -48,6 +48,7 @@ public class CardStack implements IDrawable {
         } else {
             g.drawImage(ImageLoader.emptySpotTexture, x, y, null);
         }
+
         calcBounds(x, y);
     }
 
@@ -103,16 +104,25 @@ public class CardStack implements IDrawable {
     public CardStack getWholeCardStack(int minIndex, int maxIndex) {
         //System.out.println("minIndex: " + minIndex + "  maxIndex: " + maxIndex);
         CardStack newStack = new CardStack(this.flipType);
-        for (int i = minIndex; i < maxIndex; i++) {
-            newStack.addNewCard(this.cards.get(i).getIDNum());
+        for (int i = minIndex; i <= maxIndex; i++) {
+            newStack.cards.add(this.cards.get(i));
         }
 
         return newStack;
     }
 
-    public void deletePartOfStack(int maxIndex) {
-        for (int i = 0; i < maxIndex; i++) {
-            this.cards.remove(i);
+    public void appendStack(CardStack newStack){
+        this.cards.addAll(newStack.cards);
+    }
+
+    public void deletePartOfStack(CardStack c) {
+        /*for (int i = 0; i < maxIndex; i++) {
+            this.cards.remove(this.getCardCount()-1-i);
+        }*/
+        this.cards.removeAll(c.cards);
+
+        if(this.getCardCount() > 0){
+            this.solveFlipType(this.flipType);
         }
     }
 
@@ -123,5 +133,4 @@ public class CardStack implements IDrawable {
     public int getCardCount(){
         return this.cards.size();
     }
-
 }

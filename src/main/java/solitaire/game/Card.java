@@ -4,6 +4,7 @@ import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class Card implements IDrawable {
 	public static int SUIT_SPADE = 1;
@@ -16,8 +17,8 @@ public class Card implements IDrawable {
     private int val;
     private int suit;
 
-	private int lastX;
-	private int lastY;
+	public int lastX;
+	public int lastY;
 	
 
 	public Card(int id){
@@ -75,6 +76,6 @@ public class Card implements IDrawable {
 
     @Override
     public int hashCode() {
-        return 0;
+        return Objects.hash(id);
     }
 }
