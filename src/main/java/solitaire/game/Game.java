@@ -30,6 +30,7 @@ public class Game implements IDrawable {
     public transient File loadedFrom;
     private transient Solitaire solitaire;
 
+    public int moves;
     public int seconds;
     public int minutes;
 
@@ -91,6 +92,7 @@ public class Game implements IDrawable {
     public void initNewGame() {
         seconds = 0;
         minutes = 0;
+        moves = 0;
 
         highlightedStack = null;
         hiddenDisplayStock = new CardStack(CardStack.FLIPTYPE_NONE, CardStack.STACKTYPE_HIDDENDISPLAYSTOCK);
@@ -272,6 +274,8 @@ public class Game implements IDrawable {
             hiddenDisplayStock.deletePartOfStack(hiddenDisplayStock);
             displayStock.deletePartOfStack(displayStock);
         }
+
+        moves++;
     }
 
     /**
@@ -284,6 +288,8 @@ public class Game implements IDrawable {
             if (canMoveStack(highlightedStack.subStack, refStack.fullStack)) {
                 refStack.fullStack.appendStack(highlightedStack.subStack);
                 highlightedStack.fullStack.deletePartOfStack(highlightedStack.subStack);
+
+                moves++;
             }
         }
     }

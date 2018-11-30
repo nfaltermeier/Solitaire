@@ -1,3 +1,6 @@
+/*  This class is responsible for loading in and storing all of the images used
+    throughout the game.
+ */
 package solitaire.graphics;
 
 import org.jetbrains.annotations.Nullable;
@@ -18,7 +21,10 @@ public class ImageLoader {
     public static final int cardTexWidth = 100;
     public static final int cardTexHeight = 145;
 
-
+   /**
+     * Loads in all used images from specified file paths.
+     * @param resFolderPath The file path of the resource folder where all images are located.
+     */
     public static void init(String resFolderPath) {
         cardTextures = new BufferedImage[52];
 
@@ -47,6 +53,12 @@ public class ImageLoader {
         }
     }
 
+    /**
+     * Gets a BufferedImage from the specified file path.
+     * @param filepath The file path to find an image at.
+     * @param cl Used to get an InputStream to the specified file to use to read the image.
+     * @return A BufferedImage object that is the image found at the specified file path.
+     */
     private static @Nullable BufferedImage readImage(String filepath, ClassLoader cl) {
         try {
             // Works properly when the files are in a jar or not in a jar
