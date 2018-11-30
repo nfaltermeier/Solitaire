@@ -30,6 +30,9 @@ public class Game implements IDrawable {
     public transient File loadedFrom;
     private transient Solitaire solitaire;
 
+    public int seconds;
+    public int minutes;
+
     /**
      * Creates a new game with a reference to the controlling Solitaire instance
      * @param solitaire the instance of Solitaire that started the game
@@ -83,6 +86,9 @@ public class Game implements IDrawable {
      * Sets the state of the game to that of a new game
      */
     public void initNewGame() {
+        seconds = 0;
+        minutes = 0;
+
         highlightedStack = null;
         hiddenDisplayStock = new CardStack(CardStack.FLIPTYPE_NONE, CardStack.STACKTYPE_HIDDENDISPLAYSTOCK);
 

@@ -17,6 +17,9 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class GameDisplay extends JPanel {
 
@@ -49,12 +52,28 @@ public class GameDisplay extends JPanel {
 
             int response = fileChooser.showSaveDialog(null);
             if (response == JFileChooser.APPROVE_OPTION) {
+                if (fileChooser.getSelectedFile().exists()) {
+                    int overwriteResponse = JOptionPane.showConfirmDialog(null,
+                            "The selected file already exists, would you like to overwrite it?",
+                            "Overwrite file?", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+                    if (overwriteResponse != JOptionPane.YES_OPTION)
+                        return;
+                }
                 Gson gson = new Gson();
                 String gameString = gson.toJson(game);
+                String gameHash = "";
+                try {
+                    MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+                    gameHash = new String(messageDigest.digest(gameString.getBytes(StandardCharsets.UTF_8)));
+                } catch (NoSuchAlgorithmException e1) {
+                    System.err.println("SHA-256 MessageDigest is not supported :(");
+                }
 
                 try {
                     PrintWriter writer = new PrintWriter(fileChooser.getSelectedFile());
-                    writer.print(gameString);
+                    writer.println(gameString);
+                    writer.print(gameHash);
                     writer.close();
 
                     if (writer.checkError())
@@ -69,7 +88,7 @@ public class GameDisplay extends JPanel {
         });
         toolbarContainer.add(saveGameButton);
 
-        toolbarContainer.add(new Timer());
+        toolbarContainer.add(new Timer(game));
 
         JPanel gameDisplay = new JPanel() {
             @Override

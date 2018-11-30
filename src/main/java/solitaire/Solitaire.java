@@ -16,7 +16,10 @@ import javax.swing.WindowConstants;
 import java.awt.GraphicsConfiguration;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -49,8 +52,24 @@ public class Solitaire {
             String errorMessage = "";
 
             try {
+                Scanner scanner = new Scanner(save);
+                String gameData = scanner.nextLine();
+                String gameHash = scanner.nextLine();
+
+                try {
+                    MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
+                    if(!gameHash.equals(new String(messageDigest.digest(gameData.getBytes(StandardCharsets.UTF_8))))) {
+                        JOptionPane.showMessageDialog(null,
+                                "Save data appears to be corrupted. Please try to load a new save or start a new game.",
+                                "Error loading save", JOptionPane.ERROR_MESSAGE);
+                        System.exit(1);
+                    }
+                } catch (NoSuchAlgorithmException e1) {
+                    System.err.println("SHA-256 MessageDigest is not supported :(");
+                }
+
                 Gson gson = new Gson();
-                g = gson.fromJson(new FileReader(save), Game.class);
+                g = gson.fromJson(gameData, Game.class);
                 g.loadedFrom = save;
                 g.setSolitaire(s);
             } catch (FileNotFoundException e) {
@@ -68,7 +87,7 @@ public class Solitaire {
                 if (response == JOptionPane.YES_OPTION) {
                     g = new Game(s);
                 } else {
-                    return;
+                    System.exit(0);
                 }
             }
         }

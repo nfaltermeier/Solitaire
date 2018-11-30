@@ -1,34 +1,31 @@
 package solitaire.graphics;
 
+import solitaire.game.Game;
+
 import javax.swing.JLabel;
 import java.awt.event.ActionEvent;
 
 public class Timer extends JLabel {
-    private int seconds;
-    private int minutes;
 
-    public Timer() {
-        seconds = 0;
-        minutes = 0;
-
+    public Timer(Game game) {
         javax.swing.Timer timer = new javax.swing.Timer(1000, (ActionEvent e) -> {
-            if (seconds == 59) {
-                seconds = 0;
-                minutes++;
+            if (game.seconds == 59) {
+                game.seconds = 0;
+                game.minutes++;
             } else {
-                seconds++;
+                game.seconds++;
             }
 
-            updateText();
+            updateText(game);
         });
         timer.setRepeats(true);
         timer.start();
 
-        updateText();
+        updateText(game);
     }
 
-    private void updateText() {
-        setText("Elapsed Time: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
+    private void updateText(Game game) {
+        setText("Elapsed Time: " + game.minutes + ":" + (game.seconds < 10 ? "0" + game.seconds : game.seconds));
         repaint();
     }
 }
