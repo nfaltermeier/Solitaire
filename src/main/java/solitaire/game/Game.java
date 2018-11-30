@@ -66,7 +66,7 @@ public class Game implements IDrawable {
 
     }
 
-    public void initNewGame() {
+    private void initNewGame() {
         isWon = false;
 
         highlightedStack = null;
@@ -98,7 +98,7 @@ public class Game implements IDrawable {
         }
 
         hiddenStock = new CardStack(CardStack.FLIPTYPE_NONE, CardStack.STACKTYPE_HIDDENSTOCK);
-        displayStock = new CardStack(CardStack.FLIPTYPE_ALL, 15, 0, CardStack.STACKTYPE_DISPLAYSTOCK);
+        displayStock = new CardStack(CardStack.FLIPTYPE_ALL, 0, 15, CardStack.STACKTYPE_DISPLAYSTOCK);
         while (remainingCards.size() > 0) {
             int indexChoice = rand.nextInt(remainingCards.size());
             hiddenStock.addNewCard(remainingCards.get(indexChoice));
@@ -108,11 +108,23 @@ public class Game implements IDrawable {
 
     }
 
-    public CardStack getSelectedCardstack(int clickedX, int clickedY){
+    private CardStack getSelectedCardstack(int clickedX, int clickedY){
         //Check through all main piles, use an individual card version for the display stock pile
         CardStack highlightedStack = null;
+        int stackType = getStackType(clickedX, clickedY);
 
-        for(int i=0;i<mainPiles.length;i++){
+        switch(stackType){
+            case CardStack.STACKTYPE_MAIN:
+                int mainStackIndex = getStackID(clickedX, clickedY);
+                int minCardID = mainPiles[mainStackIndex].getClickedCardID(clickedX, clickedY);
+                if(mainPiles[mainStackIndex].getCard(minCardID).getFaceUp()){
+                    highlightedStack = mainPiles[mainStackIndex].getWholeCardStack(minCardID, mainPiles[mainStackIndex].getCardCount()-1);
+                    lastHighlightedStackID = mainStackIndex;
+                }
+                break;
+        }
+
+        /*for(int i=0;i<mainPiles.length;i++){
             if(mainPiles[i].inBounds(clickedX, clickedY)){
                 int minCardID = mainPiles[i].getClickedCardID(clickedX, clickedY);
                 highlightedStack = mainPiles[i].getWholeCardStack(minCardID, mainPiles[i].getCardCount()-1);
@@ -129,7 +141,7 @@ public class Game implements IDrawable {
                     }
                 }
             }
-        }
+        }*/
 
         return highlightedStack;
     }
@@ -138,8 +150,6 @@ public class Game implements IDrawable {
         for(int i=0;i<mainPiles.length;i++){
             if(mainPiles[i].inBounds(clickedX, clickedY)){
                 return CardStack.STACKTYPE_MAIN;
-            }else{
-                continue;
             }
         }
 
@@ -154,8 +164,6 @@ public class Game implements IDrawable {
         for(int i=0;i<foundationStacks.length;i++){
             if(foundationStacks[i].inBounds(clickedX, clickedY)){
                 return CardStack.STACKTYPE_FOUNDATION;
-            }else{
-                continue;
             }
         }
 
@@ -212,18 +220,19 @@ public class Game implements IDrawable {
         }
     }
 
-    public boolean canMoveStack(CardStack movedStack, CardStack placedStack){
+    private boolean canMoveStack(CardStack movedStack, CardStack placedStack){
         boolean b = false;
 
         if(placedStack.getCardCount() == 0){
-            if(movedStack.getCard(0).getVal() == 12){ //If it's a king
+            Card attemptCard = movedStack.getCard(0);
+            if(attemptCard.getVal() == 12 && attemptCard.getFaceUp()){ //If it's a king
                b = true;
             }
         }else{
             Card destCard = placedStack.getCard(placedStack.getCardCount()-1);
             Card attemptCard = movedStack.getCard(0);
 
-            if(destCard.getVal() == (attemptCard.getVal()+1)){
+            if(destCard.getVal() == (attemptCard.getVal()+1) && attemptCard.getFaceUp()){
                 if(!destCard.isSameColor(attemptCard)){
                     b = true;
                 }
@@ -233,12 +242,10 @@ public class Game implements IDrawable {
         return b;
     }
 
-    public boolean checkWinConditions(){
+    private boolean checkWinConditions(){
         for(int i=0;i<foundationStacks.length;i++){
             if(foundationStacks[i].getCardCount() != 12){
                 return false;
-            }else{
-                continue;
             }
         }
         return true;
