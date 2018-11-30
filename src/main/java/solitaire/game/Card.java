@@ -4,6 +4,7 @@ import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class Card implements IDrawable {
 	public static int SUIT_SPADE = 1;
@@ -16,8 +17,8 @@ public class Card implements IDrawable {
     private int val;
     private int suit;
 
-	private int lastX;
-	private int lastY;
+	public int lastX;
+	public int lastY;
 	
 
 	public Card(int id){
@@ -65,4 +66,31 @@ public class Card implements IDrawable {
 		return bounds.contains(x, y);
 	}
 
+    public boolean isSameColor(Card c){
+	    boolean b = true;
+        switch(this.getSuit()){
+            case 1:
+            case 2:
+                b = (c.getSuit() == 1 || c.getSuit() == 2);
+                break;
+            case 3:
+            case 4:
+                b = (c.getSuit() == 3 || c.getSuit() == 4);
+                break;
+        }
+        return b;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Card)) return false;
+        Card card = (Card) o;
+        return id == card.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
