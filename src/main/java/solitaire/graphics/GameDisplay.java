@@ -57,7 +57,7 @@ public class GameDisplay extends JPanel {
             }
 
             @Override
-            public void mouseReleased(MouseEvent e){
+            public void mouseReleased(MouseEvent e) {
                 int x = e.getX();
                 int y = e.getY();
                 //System.out.println("Released at (" + x + ", " + y + ")");

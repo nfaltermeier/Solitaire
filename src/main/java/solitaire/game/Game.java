@@ -2,11 +2,11 @@ package solitaire.game;
 
 import org.jetbrains.annotations.Nullable;
 import solitaire.Solitaire;
-import solitaire.graphics.GameDisplay;
 import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
@@ -61,11 +61,11 @@ public class Game implements IDrawable {
             foundationStacks[i].draw(g, x + 1060, y + 40 + i * 165);
         }
 
-        if(highlightedStack != null){
+        if (highlightedStack != null) {
             int xPos = highlightedStack.getCard(0).lastX;
             int yPos = highlightedStack.getCard(0).lastY;
             int width = ImageLoader.cardTexWidth;
-            int height = ImageLoader.cardTexHeight + (mainPiles[0].tieredYOffset * (highlightedStack.getCardCount()-1));
+            int height = ImageLoader.cardTexHeight + (mainPiles[0].tieredYOffset * (highlightedStack.getCardCount() - 1));
 
             g.drawImage(ImageLoader.highlightTexture, xPos, yPos, width, height, null, null);
         }
@@ -114,22 +114,22 @@ public class Game implements IDrawable {
 
     }
 
-    public CardStack getSelectedCardstack(int clickedX, int clickedY){
+    public CardStack getSelectedCardstack(int clickedX, int clickedY) {
         //Check through all main piles, use an individual card version for the display stock pile
         CardStack highlightedStack = null;
 
-        for(int i=0;i<mainPiles.length;i++){
-            if(mainPiles[i].inBounds(clickedX, clickedY)){
+        for (int i = 0; i < mainPiles.length; i++) {
+            if (mainPiles[i].inBounds(clickedX, clickedY)) {
                 int minCardID = mainPiles[i].getClickedCardID(clickedX, clickedY);
-                highlightedStack = mainPiles[i].getWholeCardStack(minCardID, mainPiles[i].getCardCount()-1);
+                highlightedStack = mainPiles[i].getWholeCardStack(minCardID, mainPiles[i].getCardCount() - 1);
                 lastHighlightedStackID = i;
             }
         }
 
-        if(highlightedStack == null){
-            if(displayStock.inBounds(clickedX, clickedY)){
-                if(displayStock.getCardCount() > 2){
-                    if(displayStock.getCard(2).inBounds(clickedX, clickedY)){
+        if (highlightedStack == null) {
+            if (displayStock.inBounds(clickedX, clickedY)) {
+                if (displayStock.getCardCount() > 2) {
+                    if (displayStock.getCard(2).inBounds(clickedX, clickedY)) {
                         highlightedStack = displayStock.getWholeCardStack(2, 2);
                         lastHighlightedStackID = 99;
                     }
@@ -140,27 +140,27 @@ public class Game implements IDrawable {
         return highlightedStack;
     }
 
-    private int getStackType(int clickedX, int clickedY){
-        for(int i=0;i<mainPiles.length;i++){
-            if(mainPiles[i].inBounds(clickedX, clickedY)){
+    private int getStackType(int clickedX, int clickedY) {
+        for (int i = 0; i < mainPiles.length; i++) {
+            if (mainPiles[i].inBounds(clickedX, clickedY)) {
                 return CardStack.STACKTYPE_MAIN;
-            }else{
+            } else {
                 continue;
             }
         }
 
-        if(displayStock.inBounds(clickedX, clickedY)){
+        if (displayStock.inBounds(clickedX, clickedY)) {
             return CardStack.STACKTYPE_DISPLAYSTOCK;
         }
 
-        if(hiddenStock.inBounds(clickedX, clickedY)){
+        if (hiddenStock.inBounds(clickedX, clickedY)) {
             return CardStack.STACKTYPE_HIDDENSTOCK;
         }
 
-        for(int i=0;i<foundationStacks.length;i++){
-            if(foundationStacks[i].inBounds(clickedX, clickedY)){
+        for (int i = 0; i < foundationStacks.length; i++) {
+            if (foundationStacks[i].inBounds(clickedX, clickedY)) {
                 return CardStack.STACKTYPE_FOUNDATION;
-            }else{
+            } else {
                 continue;
             }
         }
@@ -168,11 +168,11 @@ public class Game implements IDrawable {
         return -1;
     }
 
-    private int getStackID(int clickedX, int clickedY){
+    private int getStackID(int clickedX, int clickedY) {
         int id = -1;
 
-        for(int i=0;i<mainPiles.length;i++){
-            if(mainPiles[i].inBounds(clickedX, clickedY)){
+        for (int i = 0; i < mainPiles.length; i++) {
+            if (mainPiles[i].inBounds(clickedX, clickedY)) {
                 id = i;
             }
         }
@@ -180,13 +180,13 @@ public class Game implements IDrawable {
         return id;
     }
 
-    public void onClick(int x, int y, JPanel gd){
-        if(highlightedStack == null){
+    public void onClick(int x, int y, JPanel gd) {
+        if (highlightedStack == null) {
             highlightedStack = getSelectedCardstack(x, y);
-        }else{
+        } else {
             int refStackType = getStackType(x, y);
 
-            switch(refStackType){
+            switch (refStackType) {
                 case CardStack.STACKTYPE_MAIN:
                     int refStackID = getStackID(x, y);
                     internalStackMove(mainPiles[refStackID]);
@@ -220,33 +220,33 @@ public class Game implements IDrawable {
         solitaire.displayGame(new Game(solitaire));
     }
 
-    private void internalStackMove(CardStack refStack){
-        if(highlightedStack.getCardCount() > 0){
-            if(canMoveStack(highlightedStack, refStack)){
+    private void internalStackMove(CardStack refStack) {
+        if (highlightedStack.getCardCount() > 0) {
+            if (canMoveStack(highlightedStack, refStack)) {
                 refStack.appendStack(highlightedStack);
 
-                if(lastHighlightedStackID == 99){
+                if (lastHighlightedStackID == 99) {
                     displayStock.deletePartOfStack(highlightedStack);
-                }else{
+                } else {
                     mainPiles[lastHighlightedStackID].deletePartOfStack(highlightedStack);
                 }
             }
         }
     }
 
-    public boolean canMoveStack(CardStack movedStack, CardStack placedStack){
+    public boolean canMoveStack(CardStack movedStack, CardStack placedStack) {
         boolean b = false;
 
-        if(placedStack.getCardCount() == 0){
-            if(movedStack.getCard(0).getVal() == 12){ //If it's a king
-               b = true;
+        if (placedStack.getCardCount() == 0) {
+            if (movedStack.getCard(0).getVal() == 12) { //If it's a king
+                b = true;
             }
-        }else{
-            Card destCard = placedStack.getCard(placedStack.getCardCount()-1);
+        } else {
+            Card destCard = placedStack.getCard(placedStack.getCardCount() - 1);
             Card attemptCard = movedStack.getCard(0);
 
-            if(destCard.getVal() == (attemptCard.getVal()+1)){
-                if(!destCard.isSameColor(attemptCard)){
+            if (destCard.getVal() == (attemptCard.getVal() + 1)) {
+                if (!destCard.isSameColor(attemptCard)) {
                     b = true;
                 }
             }
@@ -255,11 +255,11 @@ public class Game implements IDrawable {
         return b;
     }
 
-    public boolean checkWinConditions(){
-        for(int i=0;i<foundationStacks.length;i++){
-            if(foundationStacks[i].getCardCount() != 12){
+    public boolean checkWinConditions() {
+        for (int i = 0; i < foundationStacks.length; i++) {
+            if (foundationStacks[i].getCardCount() != 12) {
                 return false;
-            }else{
+            } else {
                 continue;
             }
         }

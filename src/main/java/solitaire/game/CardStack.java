@@ -3,7 +3,8 @@ package solitaire.game;
 import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.util.Stack;
 
 public class CardStack implements IDrawable {
@@ -100,7 +101,7 @@ public class CardStack implements IDrawable {
 
     public int getClickedCardID(int x, int y) {
         int maxIndex = 0;
-        for (int i = this.getCardCount()-1; i >= 0; i--) {
+        for (int i = this.getCardCount() - 1; i >= 0; i--) {
             if (this.cards.get(i).inBounds(x, y)) {
                 maxIndex = Math.max(maxIndex, i);
             }
@@ -119,7 +120,7 @@ public class CardStack implements IDrawable {
         return newStack;
     }
 
-    public void appendStack(CardStack newStack){
+    public void appendStack(CardStack newStack) {
         this.cards.addAll(newStack.cards);
     }
 
@@ -130,16 +131,16 @@ public class CardStack implements IDrawable {
 
         int diffSum = oldCount - this.getCardCount();
 
-        if(this.getCardCount() > 0 && diffSum <= 1){ //mess with this until all stuff in a stack dont flip
+        if (this.getCardCount() > 0 && diffSum <= 1) { //mess with this until all stuff in a stack dont flip
             this.solveFlipType(this.flipType);
         }
     }
 
-    public Card getCard(int index){
+    public Card getCard(int index) {
         return this.cards.get(index);
     }
 
-    public int getCardCount(){
+    public int getCardCount() {
         return this.cards.size();
     }
 }
