@@ -21,7 +21,7 @@ public class ImageLoader {
     public static final int cardTexWidth = 100;
     public static final int cardTexHeight = 145;
 
-    /**
+   /**
      * Loads in all used images from specified file paths.
      * @param resFolderPath The file path of the resource folder where all images are located.
      */
