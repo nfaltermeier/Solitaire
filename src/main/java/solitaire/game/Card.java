@@ -14,9 +14,9 @@ public class Card implements IDrawable {
     public static int SUIT_DIAMOND = 4;
 
     private boolean isFaceUp;
-    private int id;
-    private int val;
-    private int suit;
+    private final int id;
+    public final int val;
+    public final int suit;
 
     public int lastX;
     public int lastY;
@@ -46,19 +46,6 @@ public class Card implements IDrawable {
         lastY = y;
     }
 
-
-    public int getVal() {
-        return this.val;
-    }
-
-    public int getSuit() {
-        return this.suit;
-    }
-
-    public int getIDNum() {
-        return this.id;
-    }
-
     public void setFaceDir(boolean isUp) {
         this.isFaceUp = isUp;
     }
@@ -73,18 +60,16 @@ public class Card implements IDrawable {
     }
 
     public boolean isSameColor(Card c) {
-        boolean b = true;
-        switch (this.getSuit()) {
+        switch (suit) {
             case 1:
             case 2:
-                b = (c.getSuit() == 1 || c.getSuit() == 2);
-                break;
+                return (c.suit == SUIT_SPADE || c.suit == SUIT_CLUB);
             case 3:
             case 4:
-                b = (c.getSuit() == 3 || c.getSuit() == 4);
-                break;
+                return (c.suit == SUIT_HEART || c.suit == SUIT_DIAMOND);
         }
-        return b;
+
+        return true;
     }
 
     @Override

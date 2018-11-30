@@ -105,7 +105,7 @@ public class Game implements IDrawable {
         for (CardStack c : mainPiles) {
             if (c.inBounds(clickedX, clickedY)) {
                 int clickedCardIndex = c.getClickedCardIndex(clickedX, clickedY);
-                if(c.getCard(clickedCardIndex).isFaceUp()){
+                if (c.getCardCount() == 0 || c.getCard(clickedCardIndex).isFaceUp()) {
                     return new SelectedStackResult(c, c.getSubstack(clickedCardIndex, c.getCardCount()));
                 }
             }
@@ -164,15 +164,15 @@ public class Game implements IDrawable {
 
                                 if (clickedStack.fullStack.getCardCount() == 0) {
                                     // If it's an ace
-                                    if (cardBeingMoved.getVal() == 0) {
+                                    if (cardBeingMoved.val == 0) {
                                         clickedStack.fullStack.appendStack(highlightedStack.subStack);
                                         highlightedStack.fullStack.deletePartOfStack(highlightedStack.subStack);
                                     }
                                 } else {
                                     Card cardBeingMovedOnto = clickedStack.subStack.getCard(0);
 
-                                    if (cardBeingMoved.getVal() == cardBeingMovedOnto.getVal() + 1 &&
-                                            cardBeingMoved.getSuit() == cardBeingMovedOnto.getSuit()) {
+                                    if (cardBeingMoved.val == cardBeingMovedOnto.val + 1 &&
+                                            cardBeingMoved.suit == cardBeingMovedOnto.suit) {
                                         clickedStack.fullStack.appendStack(highlightedStack.subStack);
                                         highlightedStack.fullStack.deletePartOfStack(highlightedStack.subStack);
                                     }
@@ -253,14 +253,14 @@ public class Game implements IDrawable {
         if (placedStack.stackType == CardStack.STACKTYPE_MAIN) {
             if (placedStack.getCardCount() == 0) {
                 Card attemptCard = movedStack.getCard(0);
-                if (attemptCard.getVal() == 12 && attemptCard.isFaceUp()) { // If it's a king
+                if (attemptCard.val == 12 && attemptCard.isFaceUp()) { // If it's a king
                     b = true;
                 }
             } else {
                 Card destCard = placedStack.getCard(placedStack.getCardCount() - 1);
                 Card attemptCard = movedStack.getCard(0);
 
-                if (destCard.getVal() == (attemptCard.getVal() + 1) && attemptCard.isFaceUp()) {
+                if (destCard.val == (attemptCard.val + 1) && attemptCard.isFaceUp()) {
                     if (!destCard.isSameColor(attemptCard)) {
                         b = true;
                     }
@@ -272,13 +272,13 @@ public class Game implements IDrawable {
     }
 
     private boolean checkWinConditions() {
-        if(hiddenStock.getCardCount() != 0 || displayStock.getCardCount() != 0){
+        if (hiddenStock.getCardCount() != 0 || displayStock.getCardCount() != 0) {
             return false;
         }
 
-        for(CardStack stack : mainPiles){
-            for(int i=0;i<stack.getCardCount();i++){
-                if(!stack.getCard(i).isFaceUp()){
+        for (CardStack stack : mainPiles) {
+            for (int i = 0; i < stack.getCardCount(); i++) {
+                if (!stack.getCard(i).isFaceUp()) {
                     return false;
                 }
             }
