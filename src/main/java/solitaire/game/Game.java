@@ -105,7 +105,7 @@ public class Game implements IDrawable {
         for (CardStack c : mainPiles) {
             if (c.inBounds(clickedX, clickedY)) {
                 int clickedCardIndex = c.getClickedCardIndex(clickedX, clickedY);
-                if(c.getCard(clickedCardIndex).isFaceUp()){
+                if(c.getCardCount() == 0 || c.getCard(clickedCardIndex).isFaceUp()){
                     return new SelectedStackResult(c, c.getSubstack(clickedCardIndex, c.getCardCount()));
                 }
             }
