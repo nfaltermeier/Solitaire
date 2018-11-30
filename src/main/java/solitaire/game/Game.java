@@ -43,14 +43,14 @@ public class Game implements IDrawable {
         displayStock.draw(g, x + 20, y + 185);
 
         for (int i = 0; i < mainPiles.length; i++) {
-            mainPiles[i].draw(g, x + 180 + i * 120, y + 10);
+            mainPiles[i].draw(g, x + 190 + i * 120, y + 10);
         }
 
         for (int i = 0; i < foundationStacks.length; i++) {
-            foundationStacks[i].draw(g, x + 1060, y + 40 + i * 165);
+            foundationStacks[i].draw(g, x + 1080, y + 40 + i * 165);
         }
 
-        if (highlightedStack != null) {
+        if (highlightedStack != null && highlightedStack.fullStack.getCardCount() != 0) {
             int xPos = highlightedStack.subStack.getCard(0).lastX;
             int yPos = highlightedStack.subStack.getCard(0).lastY;
             int width = ImageLoader.cardTexWidth;
@@ -132,11 +132,11 @@ public class Game implements IDrawable {
         return null;
     }
 
-    public void onClick(int x, int y, JPanel gd) {
+    public void onClick(int x, int y) {
         if (hiddenStock.inBounds(x, y)) {
             cycleStock();
 
-            gd.repaint();
+            highlightedStack = null;
 
             if (checkWinConditions()) {
                 onGameWon();
@@ -144,7 +144,9 @@ public class Game implements IDrawable {
         } else {
             SelectedStackResult clickedStack = getSelectedCardstack(x, y);
 
-            if (clickedStack != null) {
+            if (clickedStack == null) {
+                highlightedStack = null;
+            } else {
                 if (highlightedStack == null) {
                     highlightedStack = clickedStack;
                 } else {
@@ -178,8 +180,6 @@ public class Game implements IDrawable {
 
                     highlightedStack = null;
                 }
-
-                gd.repaint();
 
                 if (checkWinConditions()) {
                     onGameWon();
