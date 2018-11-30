@@ -66,8 +66,6 @@ public class CardStack implements IDrawable {
 
     }
 
-
-
     public void addNewCard(int id) {
         this.cards.add(new Card(id));
         solveFlipType(flipType);
@@ -140,7 +138,4 @@ public class CardStack implements IDrawable {
     public int getCardCount() {
         return this.cards.size();
     }
-
-
-
 }
