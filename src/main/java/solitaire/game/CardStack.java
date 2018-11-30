@@ -58,7 +58,9 @@ public class CardStack implements IDrawable {
         }
 
         calcBounds(x, y);
+
     }
+
 
 
     public void addNewCard(int id) {
@@ -142,4 +144,7 @@ public class CardStack implements IDrawable {
     public int getCardCount(){
         return this.cards.size();
     }
+
+
+
 }
