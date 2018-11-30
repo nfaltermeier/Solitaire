@@ -132,9 +132,9 @@ public class CardStack implements IDrawable {
     public void deletePartOfStack(CardStack c) {
         this.cards.removeAll(c.cards);
 
-        if(this.getCardCount() > 0){
-            if(!this.getCard(this.getCardCount()-1).isFaceUp()){
-                this.getCard(this.getCardCount()-1).setFaceDir(true);
+        if (this.getCardCount() > 0) {
+            if (!this.getCard(this.getCardCount() - 1).isFaceUp()) {
+                this.getCard(this.getCardCount() - 1).setFaceDir(true);
             }
         }
     }

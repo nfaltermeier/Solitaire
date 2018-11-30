@@ -105,7 +105,7 @@ public class Game implements IDrawable {
         for (CardStack c : mainPiles) {
             if (c.inBounds(clickedX, clickedY)) {
                 int clickedCardIndex = c.getClickedCardIndex(clickedX, clickedY);
-                if(c.getCardCount() == 0 || c.getCard(clickedCardIndex).isFaceUp()){
+                if (c.getCardCount() == 0 || c.getCard(clickedCardIndex).isFaceUp()) {
                     return new SelectedStackResult(c, c.getSubstack(clickedCardIndex, c.getCardCount()));
                 }
             }
@@ -272,13 +272,13 @@ public class Game implements IDrawable {
     }
 
     private boolean checkWinConditions() {
-        if(hiddenStock.getCardCount() != 0 || displayStock.getCardCount() != 0){
+        if (hiddenStock.getCardCount() != 0 || displayStock.getCardCount() != 0) {
             return false;
         }
 
-        for(CardStack stack : mainPiles){
-            for(int i=0;i<stack.getCardCount();i++){
-                if(!stack.getCard(i).isFaceUp()){
+        for (CardStack stack : mainPiles) {
+            for (int i = 0; i < stack.getCardCount(); i++) {
+                if (!stack.getCard(i).isFaceUp()) {
                     return false;
                 }
             }
