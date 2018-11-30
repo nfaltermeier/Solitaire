@@ -1,3 +1,6 @@
+/**
+ * ImageLoader class loads in the images from resources so the rest of the application can use them.
+ */
 package solitaire.graphics;
 
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +22,10 @@ public class ImageLoader {
     public static final int cardTexHeight = 145;
 
 
+    /**
+     * Prepares file paths for resources and then calls the readImage method. Cards are loaded based off their identifiers.
+     * @param resFolderPath
+     */
     public static void init(String resFolderPath) {
         cardTextures = new BufferedImage[52];
 
@@ -47,6 +54,12 @@ public class ImageLoader {
         }
     }
 
+    /**
+     * Returns an image if the image was found in the resources by filepath name.
+     * @param filepath
+     * @param cl
+     * @return
+     */
     private static @Nullable BufferedImage readImage(String filepath, ClassLoader cl) {
         try {
             // Works properly when the files are in a jar or not in a jar

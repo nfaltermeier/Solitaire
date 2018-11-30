@@ -1,3 +1,6 @@
+/**
+ * The timer class provides a timer so the user knows how long they'be been playing.
+ */
 package solitaire.graphics;
 
 import javax.swing.JLabel;
@@ -7,6 +10,9 @@ public class Timer extends JLabel {
     private int seconds;
     private int minutes;
 
+    /**
+     * Initializer method that makes a Timer object and adds to minutes after 60 seconds and adds to seconds every seconds while seconds is less than 60. Then calls update label.
+     */
     public Timer() {
         seconds = 0;
         minutes = 0;
@@ -27,6 +33,9 @@ public class Timer extends JLabel {
         updateText();
     }
 
+    /**
+     * Updates the timer text label each second to the latest time.
+     */
     private void updateText() {
         setText("Elapsed Time: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
         repaint();
