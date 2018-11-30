@@ -62,6 +62,9 @@ public abstract class Setup {
         dialog.pack();
         dialog.setResizable(false);
         dialog.setLocationRelativeTo(null);
+
+        no.requestFocusInWindow();
+        
         dialog.setVisible(true);
 
         return fileChooser.getSelectedFile();
