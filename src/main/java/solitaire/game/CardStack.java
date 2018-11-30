@@ -1,10 +1,12 @@
 package solitaire.game;
 
+import org.jetbrains.annotations.Nullable;
 import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.List;
 import java.util.Stack;
 
 public class CardStack implements IDrawable {
@@ -19,7 +21,7 @@ public class CardStack implements IDrawable {
     public final static int STACKTYPE_TEMP = 4;
 
     private Stack<Card> cards;
-    public int stackType;
+    public final int stackType;
 
     // If the lower cards peek out of the stack, otherwise only the top card is visible
 
@@ -31,21 +33,23 @@ public class CardStack implements IDrawable {
 
 
     public CardStack(int flipType, int stackType) {
-        this.cards = new Stack<>();
-
-        this.stackType = stackType;
-
-        this.flipType = flipType;
-
-        this.tieredXOffset = 0;
-        this.tieredYOffset = 0;
+        this(flipType, stackType, 0, 0);
     }
 
-    public CardStack(int flipType, int tieredXOffset, int tieredYOffset, int stackType) {
-        this(flipType, stackType);
+    public CardStack(int flipType, int stackType, int tieredXOffset, int tieredYOffset) {
+        this(null, flipType, stackType, tieredXOffset, tieredYOffset);
+    }
 
+    private CardStack(@Nullable List<Card> cards, int flipType, int stackType, int tieredXOffset, int tieredYOffset) {
+        this.cards = new Stack<>();
+        this.stackType = stackType;
+        this.flipType = flipType;
         this.tieredXOffset = tieredXOffset;
         this.tieredYOffset = tieredYOffset;
+
+        if (cards != null) {
+            this.cards.addAll(cards);
+        }
     }
 
     @Override
@@ -99,7 +103,7 @@ public class CardStack implements IDrawable {
         return bounds.contains(x, y);
     }
 
-    public int getClickedCardID(int x, int y) {
+    public int getClickedCardIndex(int x, int y) {
         int maxIndex = 0;
         for (int i = this.getCardCount() - 1; i >= 0; i--) {
             if (this.cards.get(i).inBounds(x, y)) {
@@ -110,14 +114,8 @@ public class CardStack implements IDrawable {
         return maxIndex;
     }
 
-    public CardStack getWholeCardStack(int minIndex, int maxIndex) {
-        //System.out.println("minIndex: " + minIndex + "  maxIndex: " + maxIndex);
-        CardStack newStack = new CardStack(this.flipType, STACKTYPE_TEMP);
-        for (int i = minIndex; i <= maxIndex; i++) {
-            newStack.cards.add(this.cards.get(i));
-        }
-
-        return newStack;
+    public CardStack getSubstack(int minIndex, int maxIndex) {
+        return new CardStack(cards.subList(minIndex, maxIndex), FLIPTYPE_NONE, STACKTYPE_TEMP, 0, 0);
     }
 
     public void appendStack(CardStack newStack) {
