@@ -26,6 +26,8 @@ public class Game implements IDrawable {
     public transient File loadedFrom;
     private transient Solitaire solitaire;
 
+    public int moves;
+
     public Game(Solitaire solitaire) {
         loadedFrom = null;
         this.solitaire = solitaire;
@@ -62,6 +64,8 @@ public class Game implements IDrawable {
     }
 
     public void initNewGame() {
+        moves = 0;
+
         highlightedStack = null;
         hiddenDisplayStock = new CardStack(CardStack.FLIPTYPE_NONE, CardStack.STACKTYPE_HIDDENDISPLAYSTOCK);
 
@@ -235,6 +239,8 @@ public class Game implements IDrawable {
             hiddenDisplayStock.deletePartOfStack(hiddenDisplayStock);
             displayStock.deletePartOfStack(displayStock);
         }
+
+        moves++;
     }
 
     private void internalStackMove(SelectedStackResult refStack) {
@@ -243,6 +249,8 @@ public class Game implements IDrawable {
                 refStack.fullStack.appendStack(highlightedStack.subStack);
 
                 highlightedStack.fullStack.deletePartOfStack(highlightedStack.subStack);
+
+                moves++;
             }
         }
     }

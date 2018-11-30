@@ -1,3 +1,7 @@
+/*  This class creates a window to ask the user if they would like to load a saved game or not.
+    It also stops the program from continuing until the user makes a decision on this window.
+ */
+
 package solitaire.graphics;
 
 import org.jetbrains.annotations.Nullable;
@@ -13,9 +17,10 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 
 public abstract class Setup {
+
     /**
-     * Prevents the program from continuing until the user goes through the window this method opens
-     *
+     * Makes the window to ask the user if they would like to load a saved game or not. Also
+     * prevents the program from continuing until the user goes through the window this method opens.
      * @return The file representing the save file the game should be started from, or null to start from a new file
      */
     public static @Nullable File showSetupWindow() {

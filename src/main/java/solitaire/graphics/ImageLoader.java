@@ -1,5 +1,5 @@
-/**
- * ImageLoader class loads in the images from resources so the rest of the application can use them.
+/*  This class is responsible for loading in and storing all of the images used
+    throughout the game.
  */
 package solitaire.graphics;
 
@@ -21,10 +21,9 @@ public class ImageLoader {
     public static final int cardTexWidth = 100;
     public static final int cardTexHeight = 145;
 
-
-    /**
-     * Prepares file paths for resources and then calls the readImage method. Cards are loaded based off their identifiers.
-     * @param resFolderPath
+   /**
+     * Loads in all used images from specified file paths.
+     * @param resFolderPath The file path of the resource folder where all images are located.
      */
     public static void init(String resFolderPath) {
         cardTextures = new BufferedImage[52];
@@ -55,10 +54,10 @@ public class ImageLoader {
     }
 
     /**
-     * Returns an image if the image was found in the resources by filepath name.
-     * @param filepath
-     * @param cl
-     * @return
+     * Gets a BufferedImage from the specified file path.
+     * @param filepath The file path to find an image at.
+     * @param cl Used to get an InputStream to the specified file to use to read the image.
+     * @return A BufferedImage object that is the image found at the specified file path.
      */
     private static @Nullable BufferedImage readImage(String filepath, ClassLoader cl) {
         try {
