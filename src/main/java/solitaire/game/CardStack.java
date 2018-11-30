@@ -11,20 +11,28 @@ public class CardStack implements IDrawable {
     public final static int FLIPTYPE_NONE = 1;
     public final static int FLIPTYPE_ALL = 2;
 
+    public final static int STACKTYPE_MAIN = 0;
+    public final static int STACKTYPE_DISPLAYSTOCK = 1;
+    public final static int STACKTYPE_HIDDENSTOCK = 2;
+    public final static int STACKTYPE_FOUNDATION = 3;
+    public final static int STACKTYPE_TEMP = 4;
 
     private Stack<Card> cards;
+    public int stackType;
 
     // If the lower cards peek out of the stack, otherwise only the top card is visible
 
     private int flipType;
-    private int tieredXOffset; // There are the value(s) that the cards will be offset by when they are tiered.
-    private int tieredYOffset;
+    public int tieredXOffset; // There are the value(s) that the cards will be offset by when they are tiered.
+    public int tieredYOffset;
 
     private Rectangle bounds;
 
 
-    public CardStack(int flipType) {
+    public CardStack(int flipType, int stackType) {
         this.cards = new Stack<>();
+
+        this.stackType = stackType;
 
         this.flipType = flipType;
 
@@ -32,8 +40,8 @@ public class CardStack implements IDrawable {
         this.tieredYOffset = 0;
     }
 
-    public CardStack(int flipType, int tieredXOffset, int tieredYOffset) {
-        this(flipType);
+    public CardStack(int flipType, int tieredXOffset, int tieredYOffset, int stackType) {
+        this(flipType, stackType);
 
         this.tieredXOffset = tieredXOffset;
         this.tieredYOffset = tieredYOffset;
@@ -103,7 +111,7 @@ public class CardStack implements IDrawable {
 
     public CardStack getWholeCardStack(int minIndex, int maxIndex) {
         //System.out.println("minIndex: " + minIndex + "  maxIndex: " + maxIndex);
-        CardStack newStack = new CardStack(this.flipType);
+        CardStack newStack = new CardStack(this.flipType, STACKTYPE_TEMP);
         for (int i = minIndex; i <= maxIndex; i++) {
             newStack.cards.add(this.cards.get(i));
         }
@@ -116,12 +124,13 @@ public class CardStack implements IDrawable {
     }
 
     public void deletePartOfStack(CardStack c) {
-        /*for (int i = 0; i < maxIndex; i++) {
-            this.cards.remove(this.getCardCount()-1-i);
-        }*/
+        int oldCount = this.getCardCount();
+
         this.cards.removeAll(c.cards);
 
-        if(this.getCardCount() > 0){
+        int diffSum = oldCount - this.getCardCount();
+
+        if(this.getCardCount() > 0 && diffSum <= 1){ //mess with this until all stuff in a stack dont flip
             this.solveFlipType(this.flipType);
         }
     }

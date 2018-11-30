@@ -19,6 +19,8 @@ public class Game implements IDrawable {
     private CardStack hiddenStock;
     private CardStack displayStock;
 
+    public boolean isWon;
+
     private int mainPileYOffset; //Set this with graphics stuff
     private int displayStockXOffset; //Set this with graphics stuff
 
@@ -54,16 +56,19 @@ public class Game implements IDrawable {
         }
 
         if(highlightedStack != null){
-            for(int i=0;i<highlightedStack.getCardCount();i++){
-                g.drawImage(ImageLoader.highlightTexture, highlightedStack.getCard(i).lastX,
-                        highlightedStack.getCard(i).lastY, ImageLoader.cardTexWidth,
-                        ImageLoader.cardTexHeight, null, null);
-            }
+            int xPos = highlightedStack.getCard(0).lastX;
+            int yPos = highlightedStack.getCard(0).lastY;
+            int width = ImageLoader.cardTexWidth;
+            int height = ImageLoader.cardTexHeight + (mainPiles[0].tieredYOffset * (highlightedStack.getCardCount()-1));
+
+            g.drawImage(ImageLoader.highlightTexture, xPos, yPos, width, height, null, null);
         }
 
     }
 
     public void initNewGame() {
+        isWon = false;
+
         highlightedStack = null;
         lastHighlightedStackID = -1;
 
@@ -78,13 +83,13 @@ public class Game implements IDrawable {
 
 
         for (int i = 0; i < foundationStacks.length; i++) {
-            foundationStacks[i] = new CardStack(CardStack.FLIPTYPE_ALL);
+            foundationStacks[i] = new CardStack(CardStack.FLIPTYPE_ALL, CardStack.STACKTYPE_FOUNDATION);
         }
 
         Random rand = new Random();
 
         for (int i = 0; i < mainPiles.length; i++) {
-            mainPiles[i] = new CardStack(CardStack.FLIPTYPE_TOP, 0, 40);
+            mainPiles[i] = new CardStack(CardStack.FLIPTYPE_TOP, 0, 40, CardStack.STACKTYPE_MAIN);
             for (int j = 0; j < i + 1; j++) {
                 int indexChoice = rand.nextInt(remainingCards.size());
                 mainPiles[i].addNewCard(remainingCards.get(indexChoice));
@@ -92,8 +97,8 @@ public class Game implements IDrawable {
             }
         }
 
-        hiddenStock = new CardStack(CardStack.FLIPTYPE_NONE);
-        displayStock = new CardStack(CardStack.FLIPTYPE_ALL, 15, 0);
+        hiddenStock = new CardStack(CardStack.FLIPTYPE_NONE, CardStack.STACKTYPE_HIDDENSTOCK);
+        displayStock = new CardStack(CardStack.FLIPTYPE_ALL, 15, 0, CardStack.STACKTYPE_DISPLAYSTOCK);
         while (remainingCards.size() > 0) {
             int indexChoice = rand.nextInt(remainingCards.size());
             hiddenStock.addNewCard(remainingCards.get(indexChoice));
@@ -126,8 +131,35 @@ public class Game implements IDrawable {
             }
         }
 
-
         return highlightedStack;
+    }
+
+    private int getStackType(int clickedX, int clickedY){
+        for(int i=0;i<mainPiles.length;i++){
+            if(mainPiles[i].inBounds(clickedX, clickedY)){
+                return CardStack.STACKTYPE_MAIN;
+            }else{
+                continue;
+            }
+        }
+
+        if(displayStock.inBounds(clickedX, clickedY)){
+            return CardStack.STACKTYPE_DISPLAYSTOCK;
+        }
+
+        if(hiddenStock.inBounds(clickedX, clickedY)){
+            return CardStack.STACKTYPE_HIDDENSTOCK;
+        }
+
+        for(int i=0;i<foundationStacks.length;i++){
+            if(foundationStacks[i].inBounds(clickedX, clickedY)){
+                return CardStack.STACKTYPE_FOUNDATION;
+            }else{
+                continue;
+            }
+        }
+
+        return -1;
     }
 
     private int getStackID(int clickedX, int clickedY){
@@ -139,12 +171,6 @@ public class Game implements IDrawable {
             }
         }
 
-        if(id == -1){
-            if(displayStock.inBounds(clickedX, clickedY)){
-                id = 99;
-            }
-        }
-
         return id;
     }
 
@@ -152,23 +178,28 @@ public class Game implements IDrawable {
         if(highlightedStack == null){
             highlightedStack = getSelectedCardstack(x, y);
         }else{
-            CardStack refStack = null;
-            int refStackID = getStackID(x, y);
-            if(refStackID == 99){
-                internalStackMove(displayStock);
-            }else{
-                if(refStackID != -1){
+            int refStackType = getStackType(x, y);
+
+            switch(refStackType){
+                case CardStack.STACKTYPE_MAIN:
+                    int refStackID = getStackID(x, y);
                     internalStackMove(mainPiles[refStackID]);
-                }
+                    break;
+                case CardStack.STACKTYPE_DISPLAYSTOCK:
+                    internalStackMove(displayStock);
+                    break;
             }
 
+            highlightedStack = null;
         }
+
+        isWon = checkWinConditions();
 
         gd.repaint();
     }
 
     private void internalStackMove(CardStack refStack){
-        if(highlightedStack.getCardCount() > 0 && refStack.getCardCount() > 0){
+        if(highlightedStack.getCardCount() > 0){
             if(canMoveStack(highlightedStack, refStack)){
                 refStack.appendStack(highlightedStack);
 
@@ -177,10 +208,6 @@ public class Game implements IDrawable {
                 }else{
                     mainPiles[lastHighlightedStackID].deletePartOfStack(highlightedStack);
                 }
-
-                highlightedStack = null;
-            }else{
-                highlightedStack = null;
             }
         }
     }
@@ -188,21 +215,33 @@ public class Game implements IDrawable {
     public boolean canMoveStack(CardStack movedStack, CardStack placedStack){
         boolean b = false;
 
-        Card destCard = placedStack.getCard(placedStack.getCardCount()-1);
-        Card attemptCard = movedStack.getCard(0);
+        if(placedStack.getCardCount() == 0){
+            if(movedStack.getCard(0).getVal() == 12){ //If it's a king
+               b = true;
+            }
+        }else{
+            Card destCard = placedStack.getCard(placedStack.getCardCount()-1);
+            Card attemptCard = movedStack.getCard(0);
 
-        if(destCard.getVal() == (attemptCard.getVal()+1)){
-            int suitCombo = destCard.getSuit() + attemptCard.getSuit();
-            /*if(suitCombo != 3 && suitCombo != 7  && (destCard.getSuit() != attemptCard.getSuit())){
-                b = true;
-            }else{
-                b = false;
-            }*/
-
-            b = true; //Disabling suit checking for testing purposes
+            if(destCard.getVal() == (attemptCard.getVal()+1)){
+                if(!destCard.isSameColor(attemptCard)){
+                    b = true;
+                }
+            }
         }
 
         return b;
+    }
+
+    public boolean checkWinConditions(){
+        for(int i=0;i<foundationStacks.length;i++){
+            if(foundationStacks[i].getCardCount() != 12){
+                return false;
+            }else{
+                continue;
+            }
+        }
+        return true;
     }
 
 }

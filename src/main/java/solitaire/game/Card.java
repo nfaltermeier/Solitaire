@@ -66,7 +66,20 @@ public class Card implements IDrawable {
 		return bounds.contains(x, y);
 	}
 
-
+    public boolean isSameColor(Card c){
+	    boolean b = true;
+        switch(this.getSuit()){
+            case 1:
+            case 2:
+                b = (c.getSuit() == 1 || c.getSuit() == 2);
+                break;
+            case 3:
+            case 4:
+                b = (c.getSuit() == 3 || c.getSuit() == 4);
+                break;
+        }
+        return b;
+    }
 
     @Override
     public boolean equals(Object o) {
