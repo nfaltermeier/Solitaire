@@ -34,7 +34,7 @@ public class ImageLoader {
 
         String extension = ".png";
         String bridging = "_of_";
-        String[] suitNames = {"clubs", "diamonds", "hearts", "spades"};
+        String[] suitNames = {"spades", "clubs", "hearts", "diamonds"};
         String[] numberNames = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
 
         for(int i = 0; i < cardTextures.length; i++) {
