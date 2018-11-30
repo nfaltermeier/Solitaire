@@ -51,7 +51,7 @@ public class Solitaire {
             try {
                 Gson gson = new Gson();
                 g = gson.fromJson(new FileReader(save), Game.class);
-                g.setLoadedFrom(save);
+                g.loadedFrom = save;
                 g.setSolitaire(s);
             } catch (FileNotFoundException e) {
                 error = true;

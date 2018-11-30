@@ -23,18 +23,14 @@ public class Game implements IDrawable {
     private SelectedStackResult highlightedStack;
 
     @Nullable
-    private File loadedFrom;
-    private Solitaire solitaire;
+    public transient File loadedFrom;
+    private transient Solitaire solitaire;
 
     public Game(Solitaire solitaire) {
         loadedFrom = null;
         this.solitaire = solitaire;
         //Add more here later, for now it always initializes a new game
         initNewGame();
-    }
-
-    public void setLoadedFrom(@Nullable File loadedFrom) {
-        this.loadedFrom = loadedFrom;
     }
 
     public void setSolitaire(Solitaire solitaire) {
