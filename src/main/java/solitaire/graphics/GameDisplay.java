@@ -1,8 +1,11 @@
 package solitaire.graphics;
 
+import com.google.gson.Gson;
+import solitaire.Solitaire;
 import solitaire.game.Game;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import java.awt.BorderLayout;
@@ -12,6 +15,10 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 public class GameDisplay extends JPanel {
     // Shows all the stacks of cards, the background, and any UI components. The top level GUI component.
@@ -37,6 +44,36 @@ public class GameDisplay extends JPanel {
         });
         toolbarContainer.add(newGame);
 
+        JButton saveGameButton = new JButton("Save Game");
+        saveGameButton.addActionListener((ActionEvent e) -> {
+            JFileChooser fileChooser = new JFileChooser();
+            if (game.loadedFrom != null)
+                fileChooser.setSelectedFile(game.loadedFrom);
+            else
+                fileChooser.setSelectedFile(new File("MySolitaireGame.sav"));
+
+            int response = fileChooser.showSaveDialog(null);
+            if (response == JFileChooser.APPROVE_OPTION) {
+                Gson gson = new Gson();
+                String gameString = gson.toJson(game);
+
+                try {
+                    PrintWriter writer = new PrintWriter(fileChooser.getSelectedFile());
+                    writer.print(gameString);
+                    writer.close();
+
+                    if (writer.checkError())
+                        throw new IOException("The save PrintWriter ate some IO error :(");
+                } catch (IOException error) {
+                    error.printStackTrace();
+                    JOptionPane.showMessageDialog(null,
+                            "An error occurred while saving the game. Please try again.",
+                            "An error occurred", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        toolbarContainer.add(saveGameButton);
+
         toolbarContainer.add(new Timer());
 
         JPanel gameDisplay = new JPanel() {
@@ -50,12 +87,6 @@ public class GameDisplay extends JPanel {
         };
         gameDisplay.setPreferredSize(new Dimension(1180, 720));
         gameDisplay.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                //System.out.println("Clicked at (" + e.getX() + ", " + e.getY() + ")");
-
-            }
-
             @Override
             public void mouseReleased(MouseEvent e) {
                 int x = e.getX();
