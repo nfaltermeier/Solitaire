@@ -58,7 +58,7 @@ public class Solitaire {
 
                 try {
                     MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-                    if(!gameHash.equals(new String(messageDigest.digest(gameData.getBytes(StandardCharsets.UTF_8))))) {
+                    if (!gameHash.equals(new String(messageDigest.digest(gameData.getBytes(StandardCharsets.UTF_8))))) {
                         JOptionPane.showMessageDialog(null,
                                 "Save data appears to be corrupted. Please try to load a new save or start a new game.",
                                 "Error loading save", JOptionPane.ERROR_MESSAGE);

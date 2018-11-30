@@ -35,6 +35,7 @@ public class Game implements IDrawable {
 
     /**
      * Creates a new game with a reference to the controlling Solitaire instance
+     *
      * @param solitaire the instance of Solitaire that started the game
      */
     public Game(Solitaire solitaire) {
@@ -46,6 +47,7 @@ public class Game implements IDrawable {
 
     /**
      * Sets the reference to the controlling Solitaire instance
+     *
      * @param solitaire the instance of Solitaire that started the game
      */
     public void setSolitaire(Solitaire solitaire) {
@@ -54,6 +56,7 @@ public class Game implements IDrawable {
 
     /**
      * Draws the state of the game
+     *
      * @param g The graphics instance to draw the game on to
      * @param x The x coordinate of the top left corner to start drawing from
      * @param y The y coordinate of the top left corner to start drawing from
@@ -128,10 +131,11 @@ public class Game implements IDrawable {
 
     /**
      * Gets the instance of the CardStack that was clicked on
+     *
      * @param clickedX The x coordinate of where the mouse was clicked
      * @param clickedY The y coordinate of where the mouse was clicked
      * @return The full stack that was clicked on and every card below the card that was clicked on, or null if no stack
-     *         was clicked
+     * was clicked
      */
     public @Nullable SelectedStackResult getSelectedCardstack(int clickedX, int clickedY) {
         //Check through all main piles, use an individual card version for the display stock pile
@@ -172,6 +176,7 @@ public class Game implements IDrawable {
     /**
      * Is called when the game display is clicked on. Handles selecting a stack or moving cards from the previously
      * selected stack
+     *
      * @param x The x coordinate of where the mouse was clicked
      * @param y The y coordinate of where the mouse was clicked
      */
@@ -196,7 +201,7 @@ public class Game implements IDrawable {
                     switch (clickedStack.fullStack.stackType) {
                         case CardStack.STACKTYPE_MAIN:
                         case CardStack.STACKTYPE_DISPLAYSTOCK:
-                            case CardStack.STACKTYPE_FOUNDATION:
+                        case CardStack.STACKTYPE_FOUNDATION:
                             conditionallyMoveStack(clickedStack);
                             break;
                     }
@@ -271,6 +276,7 @@ public class Game implements IDrawable {
 
     /**
      * Moves a CardStack to the highlightedStack if it is valid to move it there
+     *
      * @param refStack The stack to move to the highlightedStack
      */
     private void conditionallyMoveStack(SelectedStackResult refStack) {
@@ -284,7 +290,8 @@ public class Game implements IDrawable {
 
     /**
      * Checks whether the receivingStack
-     * @param stackToMove The stack that is potentially being moved
+     *
+     * @param stackToMove    The stack that is potentially being moved
      * @param receivingStack The stack that is having cards moved onto
      * @return True if the stack can be moved
      */
@@ -324,6 +331,7 @@ public class Game implements IDrawable {
     /**
      * Checks if the player has depleted the display stock and hidden stock and revealed every card in the main piles
      * because if that has been done winning is inevitable
+     *
      * @return True if the above conditions have been met
      */
     private boolean checkWinConditions() {
@@ -350,8 +358,9 @@ public class Game implements IDrawable {
 
         /**
          * Pairs two CardStacks together
+         *
          * @param fullStack The stack containing the card that was selected
-         * @param subStack The card that was selected and every card below it
+         * @param subStack  The card that was selected and every card below it
          */
         public SelectedStackResult(CardStack fullStack, CardStack subStack) {
             this.fullStack = fullStack;
