@@ -52,8 +52,19 @@ public class GameDisplay extends JPanel {
         gameDisplay.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                System.out.println("Clicked at (" + e.getX() + ", " + e.getY() + ")");
-                game.onClick(e.getX(), e.getY(), gameDisplay);
+                //System.out.println("Clicked at (" + e.getX() + ", " + e.getY() + ")");
+
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e){
+                int x = e.getX();
+                int y = e.getY();
+                //System.out.println("Released at (" + x + ", " + y + ")");
+                game.onClick(x, y, gameDisplay);
+
+                // This is used instead of the mouseClicked method due to mouseClicked not being
+                // triggered if the mouse is moved between a press and release.
             }
         });
         add(gameDisplay, BorderLayout.SOUTH);
