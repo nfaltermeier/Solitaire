@@ -2,10 +2,14 @@ package solitaire.graphics;
 
 import solitaire.game.Game;
 
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -15,6 +19,25 @@ public class GameDisplay extends JPanel {
 
     public GameDisplay(Game game) {
         this.game = game;
+
+        setLayout(new BorderLayout());
+
+        JPanel toolbarContainer = new JPanel();
+        add(toolbarContainer, BorderLayout.WEST);
+
+        JButton newGame = new JButton("New Game");
+        newGame.addActionListener((ActionEvent e) -> {
+            int response = JOptionPane.showConfirmDialog(null,
+                    "Are you sure you would like to start a new game?", "Are you sure?",
+                    JOptionPane.YES_NO_CANCEL_OPTION);
+
+            if (response == JOptionPane.YES_OPTION) {
+                game.startNewGame();
+            }
+        });
+        toolbarContainer.add(newGame);
+
+        toolbarContainer.add(new Timer());
 
         JPanel gameDisplay = new JPanel() {
             @Override
@@ -34,7 +57,7 @@ public class GameDisplay extends JPanel {
             }
 
             @Override
-            public void mouseReleased(MouseEvent e){
+            public void mouseReleased(MouseEvent e) {
                 int x = e.getX();
                 int y = e.getY();
                 //System.out.println("Released at (" + x + ", " + y + ")");
@@ -44,6 +67,6 @@ public class GameDisplay extends JPanel {
                 // triggered if the mouse is moved between a press and release.
             }
         });
-        add(gameDisplay);
+        add(gameDisplay, BorderLayout.SOUTH);
     }
 }

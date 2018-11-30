@@ -15,6 +15,7 @@ import java.io.File;
 public abstract class Setup {
     /**
      * Prevents the program from continuing until the user goes through the window this method opens
+     *
      * @return The file representing the save file the game should be started from, or null to start from a new file
      */
     public static @Nullable File showSetupWindow() {
@@ -61,6 +62,9 @@ public abstract class Setup {
         dialog.pack();
         dialog.setResizable(false);
         dialog.setLocationRelativeTo(null);
+
+        no.requestFocusInWindow();
+        
         dialog.setVisible(true);
 
         return fileChooser.getSelectedFile();

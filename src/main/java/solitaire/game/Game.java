@@ -1,16 +1,16 @@
 package solitaire.game;
 
 import org.jetbrains.annotations.Nullable;
-import solitaire.graphics.GameDisplay;
+import solitaire.Solitaire;
 import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Stack;
 
 public class Game implements IDrawable {
     // Represents a complete game with all of its CardStacks and data
@@ -20,25 +20,25 @@ public class Game implements IDrawable {
     private CardStack hiddenStock;
     private CardStack displayStock;
 
-    public boolean isWon;
-
-    private int mainPileYOffset; // Set this with graphics stuff
-    private int displayStockXOffset; // Set this with graphics stuff
-
-    private CardStack highlightedStack;
-    private int lastHighlightedStackID;
+    private SelectedStackResult highlightedStack;
 
     @Nullable
     private File loadedFrom;
+    private Solitaire solitaire;
 
-    public Game() {
+    public Game(Solitaire solitaire) {
         loadedFrom = null;
-        // Add more here later, for now it always initializes a new game
+        this.solitaire = solitaire;
+        //Add more here later, for now it always initializes a new game
         initNewGame();
     }
 
     public void setLoadedFrom(@Nullable File loadedFrom) {
         this.loadedFrom = loadedFrom;
+    }
+
+    public void setSolitaire(Solitaire solitaire) {
+        this.solitaire = solitaire;
     }
 
     @Override
@@ -55,22 +55,18 @@ public class Game implements IDrawable {
         }
 
         if (highlightedStack != null) {
-            int xPos = highlightedStack.getCard(0).lastX;
-            int yPos = highlightedStack.getCard(0).lastY;
+            int xPos = highlightedStack.subStack.getCard(0).lastX;
+            int yPos = highlightedStack.subStack.getCard(0).lastY;
             int width = ImageLoader.cardTexWidth;
-            int height = ImageLoader.cardTexHeight
-                    + (mainPiles[0].tieredYOffset * (highlightedStack.getCardCount() - 1));
+            int height = ImageLoader.cardTexHeight + (mainPiles[0].tieredYOffset * (highlightedStack.subStack.getCardCount() - 1));
 
             g.drawImage(ImageLoader.highlightTexture, xPos, yPos, width, height, null, null);
         }
 
     }
 
-    private void initNewGame() {
-        isWon = false;
-
+    public void initNewGame() {
         highlightedStack = null;
-        lastHighlightedStackID = -1;
 
         foundationStacks = new CardStack[4];
         mainPiles = new CardStack[7];
@@ -88,7 +84,7 @@ public class Game implements IDrawable {
         Random rand = new Random();
 
         for (int i = 0; i < mainPiles.length; i++) {
-            mainPiles[i] = new CardStack(CardStack.FLIPTYPE_TOP, 0, 40, CardStack.STACKTYPE_MAIN);
+            mainPiles[i] = new CardStack(CardStack.FLIPTYPE_TOP, CardStack.STACKTYPE_MAIN, 0, 40);
             for (int j = 0; j < i + 1; j++) {
                 int indexChoice = rand.nextInt(remainingCards.size());
                 mainPiles[i].addNewCard(remainingCards.get(indexChoice));
@@ -97,7 +93,7 @@ public class Game implements IDrawable {
         }
 
         hiddenStock = new CardStack(CardStack.FLIPTYPE_NONE, CardStack.STACKTYPE_HIDDENSTOCK);
-        displayStock = new CardStack(CardStack.FLIPTYPE_ALL, 0, 40, CardStack.STACKTYPE_DISPLAYSTOCK);
+        displayStock = new CardStack(CardStack.FLIPTYPE_ALL, CardStack.STACKTYPE_DISPLAYSTOCK, 0, 40);
         while (remainingCards.size() > 0) {
             int indexChoice = rand.nextInt(remainingCards.size());
             hiddenStock.addNewCard(remainingCards.get(indexChoice));
@@ -106,100 +102,110 @@ public class Game implements IDrawable {
 
     }
 
-    private CardStack getSelectedCardstack(int clickedX, int clickedY) {
-        // Check through all main piles, use an individual card version for the display
-        // stock pile
-        CardStack highlightedStack = null;
-        int stackType = getStackType(clickedX, clickedY);
+    public @Nullable SelectedStackResult getSelectedCardstack(int clickedX, int clickedY) {
+        //Check through all main piles, use an individual card version for the display stock pile
 
-        switch (stackType) {
-        case CardStack.STACKTYPE_MAIN:
-            int mainStackIndex = getStackID(clickedX, clickedY);
-            int minCardID = mainPiles[mainStackIndex].getClickedCardID(clickedX, clickedY);
-            if (mainPiles[mainStackIndex].getCard(minCardID).getFaceUp()) {
-                highlightedStack = mainPiles[mainStackIndex].getWholeCardStack(minCardID,
-                        mainPiles[mainStackIndex].getCardCount() - 1);
-                lastHighlightedStackID = mainStackIndex;
-            }
-            break;
-        }
-
-        /*
-         * for(int i=0;i<mainPiles.length;i++){ if(mainPiles[i].inBounds(clickedX,
-         * clickedY)){ int minCardID = mainPiles[i].getClickedCardID(clickedX,
-         * clickedY); highlightedStack = mainPiles[i].getWholeCardStack(minCardID,
-         * mainPiles[i].getCardCount()-1); lastHighlightedStackID = i; } }
-         * 
-         * if(highlightedStack == null){ if(displayStock.inBounds(clickedX, clickedY)){
-         * if(displayStock.getCardCount() > 2){
-         * if(displayStock.getCard(2).inBounds(clickedX, clickedY)){ highlightedStack =
-         * displayStock.getWholeCardStack(2, 2); lastHighlightedStackID = 99; } } } }
-         */
-
-        return highlightedStack;
-    }
-
-    private int getStackType(int clickedX, int clickedY) {
-        for (int i = 0; i < mainPiles.length; i++) {
-            if (mainPiles[i].inBounds(clickedX, clickedY)) {
-                return CardStack.STACKTYPE_MAIN;
+        for (CardStack c : mainPiles) {
+            if (c.inBounds(clickedX, clickedY)) {
+                int clickedCardIndex = c.getClickedCardIndex(clickedX, clickedY);
+                return new SelectedStackResult(c, c.getSubstack(clickedCardIndex, c.getCardCount()));
             }
         }
 
         if (displayStock.inBounds(clickedX, clickedY)) {
-            return CardStack.STACKTYPE_DISPLAYSTOCK;
+            // Only the last displayStock card can be selected
+            if (displayStock.getCardCount() > 0 &&
+                    displayStock.getClickedCardIndex(clickedX, clickedY) == displayStock.getCardCount() - 1) {
+                return new SelectedStackResult(displayStock,
+                        displayStock.getSubstack(displayStock.getCardCount() - 1, displayStock.getCardCount()));
+            }
+
+            return null;
         }
 
-        if (hiddenStock.inBounds(clickedX, clickedY)) {
-            return CardStack.STACKTYPE_HIDDENSTOCK;
-        }
-
-        for (int i = 0; i < foundationStacks.length; i++) {
-            if (foundationStacks[i].inBounds(clickedX, clickedY)) {
-                return CardStack.STACKTYPE_FOUNDATION;
+        for (CardStack c : foundationStacks) {
+            if (c.inBounds(clickedX, clickedY)) {
+                if (c.getCardCount() == 0) {
+                    return new SelectedStackResult(c, c.getSubstack(0, 0));
+                } else {
+                    return new SelectedStackResult(c, c.getSubstack(c.getCardCount() - 1, c.getCardCount()));
+                }
             }
         }
 
-        return -1;
-    }
-
-    private int getStackID(int clickedX, int clickedY) {
-        int id = -1;
-
-        for (int i = 0; i < mainPiles.length; i++) {
-            if (mainPiles[i].inBounds(clickedX, clickedY)) {
-                id = i;
-            }
-        }
-
-        return id;
+        return null;
     }
 
     public void onClick(int x, int y, JPanel gd) {
-        if (highlightedStack == null) {
-            highlightedStack = getSelectedCardstack(x, y);
-        } else {
-            int refStackType = getStackType(x, y);
+        if (hiddenStock.inBounds(x, y)) {
+            cycleStock();
 
-            switch (refStackType) {
-            case CardStack.STACKTYPE_MAIN:
-                int refStackID = getStackID(x, y);
-                internalStackMove(mainPiles[refStackID]);
-                break;
-            case CardStack.STACKTYPE_DISPLAYSTOCK:
-                internalStackMove(displayStock);
-                break;
-            case CardStack.STACKTYPE_HIDDENSTOCK:
-                cycleStock();
-                break;
+            gd.repaint();
+
+            if (checkWinConditions()) {
+                onGameWon();
             }
+        } else {
+            SelectedStackResult clickedStack = getSelectedCardstack(x, y);
 
-            highlightedStack = null;
+            if (clickedStack != null) {
+                if (highlightedStack == null) {
+                    highlightedStack = clickedStack;
+                } else {
+                    switch (clickedStack.fullStack.stackType) {
+                        case CardStack.STACKTYPE_MAIN:
+                        case CardStack.STACKTYPE_DISPLAYSTOCK:
+                            internalStackMove(clickedStack);
+                            break;
+                        case CardStack.STACKTYPE_FOUNDATION:
+                            if (highlightedStack.subStack.getCardCount() == 1) {
+                                Card cardBeingMoved = highlightedStack.subStack.getCard(0);
+
+                                if (clickedStack.fullStack.getCardCount() == 0) {
+                                    // If it's an ace
+                                    if (cardBeingMoved.getVal() == 0) {
+                                        clickedStack.fullStack.appendStack(highlightedStack.subStack);
+                                        highlightedStack.fullStack.deletePartOfStack(highlightedStack.subStack);
+                                    }
+                                } else {
+                                    Card cardBeingMovedOnto = clickedStack.subStack.getCard(0);
+
+                                    if (cardBeingMoved.getVal() == cardBeingMovedOnto.getVal() + 1 &&
+                                            cardBeingMoved.getSuit() == cardBeingMovedOnto.getSuit()) {
+                                        clickedStack.fullStack.appendStack(highlightedStack.subStack);
+                                        highlightedStack.fullStack.deletePartOfStack(highlightedStack.subStack);
+                                    }
+                                }
+                            }
+                            break;
+                    }
+
+                    highlightedStack = null;
+                }
+
+                gd.repaint();
+
+                if (checkWinConditions()) {
+                    onGameWon();
+                }
+            }
         }
+    }
 
-        isWon = checkWinConditions();
+    private void onGameWon() {
+        int response = JOptionPane.showConfirmDialog(null,
+                "Congratulations! You won! Would you like to start a new game?", "You won!",
+                JOptionPane.YES_NO_OPTION);
 
-        gd.repaint();
+        if (response == JOptionPane.YES_OPTION) {
+            startNewGame();
+        } else {
+            solitaire.killDisplay();
+        }
+    }
+
+    public void startNewGame() {
+        solitaire.displayGame(new Game(solitaire));
     }
 
     public void cycleStock() {
@@ -208,7 +214,7 @@ public class Game implements IDrawable {
 
             // grab bottom card and add it to temp stack while also removing it from the
             // original stack
-            CardStack tempStack = hiddenStock.getWholeCardStack(0, 0);
+            CardStack tempStack = hiddenStock.getSubstack(0, 1);
             hiddenStock.deletePartOfStack(tempStack);
 
             // add tempStack to displayStock
@@ -218,7 +224,7 @@ public class Game implements IDrawable {
             // if displayStock is full
             if (displayStock.getCardCount() > 3) {
                 // Remove bottom card and put it back into hiddenstock
-                CardStack tempStack2 = displayStock.getWholeCardStack(0, 0);
+                CardStack tempStack2 = displayStock.getSubstack(0, 1);
                 displayStock.deletePartOfStack(tempStack2);
                 hiddenStock.appendStack(tempStack2);
 
@@ -229,16 +235,12 @@ public class Game implements IDrawable {
         }
     }
 
-    private void internalStackMove(CardStack refStack) {
-        if (highlightedStack.getCardCount() > 0) {
-            if (canMoveStack(highlightedStack, refStack)) {
-                refStack.appendStack(highlightedStack);
+    private void internalStackMove(SelectedStackResult refStack) {
+        if (highlightedStack.subStack.getCardCount() > 0) {
+            if (canMoveStack(highlightedStack.subStack, refStack.fullStack)) {
+                refStack.fullStack.appendStack(highlightedStack.subStack);
 
-                if (lastHighlightedStackID == 99) {
-                    displayStock.deletePartOfStack(highlightedStack);
-                } else {
-                    mainPiles[lastHighlightedStackID].deletePartOfStack(highlightedStack);
-                }
+                highlightedStack.fullStack.deletePartOfStack(highlightedStack.subStack);
             }
         }
     }
@@ -249,14 +251,14 @@ public class Game implements IDrawable {
         if (placedStack.stackType == CardStack.STACKTYPE_MAIN) {
             if (placedStack.getCardCount() == 0) {
                 Card attemptCard = movedStack.getCard(0);
-                if (attemptCard.getVal() == 12 && attemptCard.getFaceUp()) { // If it's a king
+                if (attemptCard.getVal() == 12 && attemptCard.isFaceUp()) { // If it's a king
                     b = true;
                 }
             } else {
                 Card destCard = placedStack.getCard(placedStack.getCardCount() - 1);
                 Card attemptCard = movedStack.getCard(0);
 
-                if (destCard.getVal() == (attemptCard.getVal() + 1) && attemptCard.getFaceUp()) {
+                if (destCard.getVal() == (attemptCard.getVal() + 1) && attemptCard.isFaceUp()) {
                     if (!destCard.isSameColor(attemptCard)) {
                         b = true;
                     }
@@ -276,4 +278,13 @@ public class Game implements IDrawable {
         return true;
     }
 
+    private class SelectedStackResult {
+        public final CardStack fullStack;
+        public final CardStack subStack;
+
+        public SelectedStackResult(CardStack fullStack, CardStack subStack) {
+            this.fullStack = fullStack;
+            this.subStack = subStack;
+        }
+    }
 }

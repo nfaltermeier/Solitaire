@@ -18,7 +18,7 @@ public class ImageLoader {
     public static final int cardTexHeight = 145;
 
 
-    public static void init(String resFolderPath){
+    public static void init(String resFolderPath) {
         cardTextures = new BufferedImage[52];
 
         ClassLoader cl = ClassLoader.getSystemClassLoader();
@@ -37,7 +37,7 @@ public class ImageLoader {
         String[] suitNames = {"spades", "clubs", "hearts", "diamonds"};
         String[] numberNames = {"ace", "2", "3", "4", "5", "6", "7", "8", "9", "10", "jack", "queen", "king"};
 
-        for(int i = 0; i < cardTextures.length; i++) {
+        for (int i = 0; i < cardTextures.length; i++) {
             filepath = resFolderPath + "/" + numberNames[i % 13] + bridging + suitNames[i / 13] + extension;
             cardTextures[i] = readImage(filepath, cl);
         }
