@@ -10,6 +10,7 @@ import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Stack;
 
 public class Game implements IDrawable {
     // Represents a complete game with all of its CardStacks and data
@@ -98,7 +99,7 @@ public class Game implements IDrawable {
         }
 
         hiddenStock = new CardStack(CardStack.FLIPTYPE_NONE, CardStack.STACKTYPE_HIDDENSTOCK);
-        displayStock = new CardStack(CardStack.FLIPTYPE_ALL, 15, 0, CardStack.STACKTYPE_DISPLAYSTOCK);
+        displayStock = new CardStack(CardStack.FLIPTYPE_ALL, 0, 40, CardStack.STACKTYPE_DISPLAYSTOCK);
         while (remainingCards.size() > 0) {
             int indexChoice = rand.nextInt(remainingCards.size());
             hiddenStock.addNewCard(remainingCards.get(indexChoice));
@@ -108,22 +109,8 @@ public class Game implements IDrawable {
 
     }
 
-    public void cycleDisplyStockPile(){
 
-      
 
-    }
-
-    public boolean hasWon(){
-        boolean won = true;
-            for(int i = 0; i < foundationStacks.length; i++){
-                int val = foundationStacks[i].getLastCardValue();
-                if (val != 12){
-                    won = false;
-                }
-            }
-        return won;
-    }
 
     public CardStack getSelectedCardstack(int clickedX, int clickedY){
         //Check through all main piles, use an individual card version for the display stock pile
@@ -205,6 +192,9 @@ public class Game implements IDrawable {
                 case CardStack.STACKTYPE_DISPLAYSTOCK:
                     internalStackMove(displayStock);
                     break;
+                case CardStack.STACKTYPE_HIDDENSTOCK:
+                    cycleStock();
+                    break;
             }
 
             highlightedStack = null;
@@ -213,6 +203,33 @@ public class Game implements IDrawable {
         isWon = checkWinConditions();
 
         gd.repaint();
+    }
+
+    public void cycleStock(){
+
+        if (hiddenStock.getCardCount() > 0) {
+
+            //grab bottom card and add it to temp stack while also removing it from the original stack
+            CardStack tempStack = hiddenStock.getWholeCardStack(0, 0);
+            hiddenStock.deletePartOfStack(tempStack);
+
+            //add tempStack to displayStock
+            displayStock.appendStack(tempStack);
+            displayStock.solveFlipType(CardStack.FLIPTYPE_ALL);
+
+
+            //if displayStock is full
+            if (displayStock.getCardCount() > 3) {
+                //Remove bottom card and put it back into hiddenstock
+                CardStack tempStack2 = displayStock.getWholeCardStack(0,0);
+                displayStock.deletePartOfStack(tempStack2);
+                hiddenStock.appendStack(tempStack2);
+
+            }
+
+            hiddenStock.solveFlipType(CardStack.FLIPTYPE_NONE);
+
+        }
     }
 
     private void internalStackMove(CardStack refStack){
