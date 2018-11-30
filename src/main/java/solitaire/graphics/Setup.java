@@ -49,7 +49,7 @@ public abstract class Setup {
 
         JButton no = new JButton("No");
         no.addActionListener((ActionEvent e) -> {
-            // incase they hit yes, selected a file, and changed their mind
+            // in case they hit yes, selected a file, and changed their mind
             fileChooser.setSelectedFile(null);
             dialog.dispose();
         });
@@ -64,7 +64,7 @@ public abstract class Setup {
         dialog.setLocationRelativeTo(null);
 
         no.requestFocusInWindow();
-        
+
         dialog.setVisible(true);
 
         return fileChooser.getSelectedFile();

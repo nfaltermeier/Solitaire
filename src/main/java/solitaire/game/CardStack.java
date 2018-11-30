@@ -26,7 +26,7 @@ public class CardStack implements IDrawable {
 
     // If the lower cards peek out of the stack, otherwise only the top card is visible
 
-    private int flipType;
+    private final int flipType;
     public int tieredXOffset; // There are the value(s) that the cards will be offset by when they are tiered.
     public int tieredYOffset;
 
@@ -87,13 +87,13 @@ public class CardStack implements IDrawable {
                 cards.get(cards.size() - 1).setFaceDir(true);
                 break;
             case FLIPTYPE_ALL:
-                for (int i = 0; i < cards.size(); i++) {
-                    cards.get(i).setFaceDir(true);
+                for (Card card : cards) {
+                    card.setFaceDir(true);
                 }
                 break;
             case FLIPTYPE_NONE:
-                for (int i = 0; i < cards.size(); i++) {
-                    cards.get(i).setFaceDir(false);
+                for (Card card : cards) {
+                    card.setFaceDir(false);
                 }
                 break;
         }
