@@ -106,8 +106,4 @@ public class Solitaire {
             frame.revalidate();
         }
     }
-
-    public void killDisplay() {
-        frame.dispose();
-    }
 }
