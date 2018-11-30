@@ -1,12 +1,12 @@
+/*  This class defines
+
+ */
 package solitaire.graphics;
 
 import com.google.gson.Gson;
 import solitaire.game.Game;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 public class GameDisplay extends JPanel {
-
     public GameDisplay(Game game) {
         // Shows all the stacks of cards, the background, and any UI components. The top level GUI component.
         setLayout(new BorderLayout());
@@ -71,6 +70,9 @@ public class GameDisplay extends JPanel {
 
         toolbarContainer.add(new Timer());
 
+        JLabel moveCounterLabel = new JLabel("    Moves: " + game.moves);
+        toolbarContainer.add(moveCounterLabel);
+
         JPanel gameDisplay = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -88,6 +90,8 @@ public class GameDisplay extends JPanel {
                 int y = e.getY();
                 //System.out.println("Released at (" + x + ", " + y + ")");
                 game.onClick(x, y);
+
+                moveCounterLabel.setText("    Moves: " + game.moves);
                 repaint();
 
                 // This is used instead of the mouseClicked method due to mouseClicked not being
