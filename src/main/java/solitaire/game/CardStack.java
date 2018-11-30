@@ -61,20 +61,6 @@ public class CardStack implements IDrawable {
 
     }
 
-    //This function returns the next card in the stack after comparing it to the last card into the stack passed in.
-    public Card getNextCard(CardStack s){
-        Card lastCard = s.getCard(s.cards.size() - 1);
-        for (int i = 0; i < this.cards.size(); i++){
-            if (lastCard.getIDNum() == this.cards.get(i).getIDNum()){
-                if (i == this.cards.size() - 1){
-                    return this.cards.get(0);
-                } else {
-                    return this.cards.get(i+1);
-                }
-            }
-        }
-        return null;
-    }
 
 
     public void addNewCard(int id) {
@@ -159,13 +145,6 @@ public class CardStack implements IDrawable {
         return this.cards.size();
     }
 
-    public int getLastCardValue(){
 
-        int val = 0;
-        if (cards.size() > 0) {
-             val = cards.get(cards.size() - 1).getVal();
-        }
-        return val;
-    }
 
 }
