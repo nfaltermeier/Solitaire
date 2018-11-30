@@ -249,17 +249,19 @@ public class Game implements IDrawable {
     public boolean canMoveStack(CardStack movedStack, CardStack placedStack){
         boolean b = false;
 
-        if(placedStack.getCardCount() == 0){
-            if(movedStack.getCard(0).getVal() == 12){ //If it's a king
-               b = true;
-            }
-        }else{
-            Card destCard = placedStack.getCard(placedStack.getCardCount()-1);
-            Card attemptCard = movedStack.getCard(0);
-
-            if(destCard.getVal() == (attemptCard.getVal()+1)){
-                if(!destCard.isSameColor(attemptCard)){
+        if(placedStack.stackType == CardStack.STACKTYPE_MAIN){
+            if(placedStack.getCardCount() == 0){
+                if(movedStack.getCard(0).getVal() == 12){ //If it's a king
                     b = true;
+                }
+            }else{
+                Card destCard = placedStack.getCard(placedStack.getCardCount()-1);
+                Card attemptCard = movedStack.getCard(0);
+
+                if(destCard.getVal() == (attemptCard.getVal()+1)){
+                    if(!destCard.isSameColor(attemptCard)){
+                        b = true;
+                    }
                 }
             }
         }
