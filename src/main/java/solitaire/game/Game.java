@@ -6,7 +6,6 @@ import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ public class Game implements IDrawable {
     private CardStack[] mainPiles;
     private CardStack hiddenStock;
     private CardStack displayStock;
+    private CardStack hiddenDisplayStock;
 
     private SelectedStackResult highlightedStack;
 
@@ -43,14 +43,14 @@ public class Game implements IDrawable {
         displayStock.draw(g, x + 20, y + 185);
 
         for (int i = 0; i < mainPiles.length; i++) {
-            mainPiles[i].draw(g, x + 180 + i * 120, y + 10);
+            mainPiles[i].draw(g, x + 190 + i * 120, y + 10);
         }
 
         for (int i = 0; i < foundationStacks.length; i++) {
-            foundationStacks[i].draw(g, x + 1060, y + 40 + i * 165);
+            foundationStacks[i].draw(g, x + 1080, y + 40 + i * 165);
         }
 
-        if (highlightedStack != null) {
+        if (highlightedStack != null && highlightedStack.fullStack.getCardCount() != 0) {
             int xPos = highlightedStack.subStack.getCard(0).lastX;
             int yPos = highlightedStack.subStack.getCard(0).lastY;
             int width = ImageLoader.cardTexWidth;
@@ -63,6 +63,7 @@ public class Game implements IDrawable {
 
     public void initNewGame() {
         highlightedStack = null;
+        hiddenDisplayStock = new CardStack(CardStack.FLIPTYPE_NONE, CardStack.STACKTYPE_HIDDENDISPLAYSTOCK);
 
         foundationStacks = new CardStack[4];
         mainPiles = new CardStack[7];
@@ -132,11 +133,11 @@ public class Game implements IDrawable {
         return null;
     }
 
-    public void onClick(int x, int y, JPanel gd) {
+    public void onClick(int x, int y) {
         if (hiddenStock.inBounds(x, y)) {
             cycleStock();
 
-            gd.repaint();
+            highlightedStack = null;
 
             if (checkWinConditions()) {
                 onGameWon();
@@ -144,7 +145,9 @@ public class Game implements IDrawable {
         } else {
             SelectedStackResult clickedStack = getSelectedCardstack(x, y);
 
-            if (clickedStack != null) {
+            if (clickedStack == null) {
+                highlightedStack = null;
+            } else {
                 if (highlightedStack == null) {
                     highlightedStack = clickedStack;
                 } else {
@@ -179,8 +182,6 @@ public class Game implements IDrawable {
                     highlightedStack = null;
                 }
 
-                gd.repaint();
-
                 if (checkWinConditions()) {
                     onGameWon();
                 }
@@ -205,7 +206,6 @@ public class Game implements IDrawable {
     }
 
     public void cycleStock() {
-
         if (hiddenStock.getCardCount() > 0) {
 
             // grab bottom card and add it to temp stack while also removing it from the
@@ -222,12 +222,16 @@ public class Game implements IDrawable {
                 // Remove bottom card and put it back into hiddenstock
                 CardStack tempStack2 = displayStock.getSubstack(0, 1);
                 displayStock.deletePartOfStack(tempStack2);
-                hiddenStock.appendStack(tempStack2);
-
+                hiddenDisplayStock.appendStack(tempStack2);
             }
 
             hiddenStock.solveFlipType(CardStack.FLIPTYPE_NONE);
-
+        } else if (hiddenDisplayStock.getCardCount() > 0) {
+            hiddenStock.appendStack(hiddenDisplayStock);
+            hiddenStock.appendStack(displayStock);
+            hiddenStock.solveFlipType(CardStack.FLIPTYPE_NONE);
+            hiddenDisplayStock.deletePartOfStack(hiddenDisplayStock);
+            displayStock.deletePartOfStack(displayStock);
         }
     }
 

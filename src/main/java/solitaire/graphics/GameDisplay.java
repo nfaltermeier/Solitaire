@@ -1,7 +1,6 @@
 package solitaire.graphics;
 
 import com.google.gson.Gson;
-import solitaire.Solitaire;
 import solitaire.game.Game;
 
 import javax.swing.JButton;
@@ -16,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -80,19 +78,20 @@ public class GameDisplay extends JPanel {
             @Override
             protected void paintComponent(Graphics g) {
                 g.setColor(new Color(0, 102, 0));
-                g.fillRect(0, 0, 1180, 720);
+                g.fillRect(0, 0, 1200, 800);
 
                 game.draw(g, 0, 0);
             }
         };
-        gameDisplay.setPreferredSize(new Dimension(1180, 720));
+        gameDisplay.setPreferredSize(new Dimension(1200, 800));
         gameDisplay.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
                 int x = e.getX();
                 int y = e.getY();
                 //System.out.println("Released at (" + x + ", " + y + ")");
-                game.onClick(x, y, gameDisplay);
+                game.onClick(x, y);
+                repaint();
 
                 // This is used instead of the mouseClicked method due to mouseClicked not being
                 // triggered if the mouse is moved between a press and release.

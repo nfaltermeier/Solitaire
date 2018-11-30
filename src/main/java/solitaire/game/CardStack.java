@@ -19,6 +19,7 @@ public class CardStack implements IDrawable {
     public final static int STACKTYPE_HIDDENSTOCK = 2;
     public final static int STACKTYPE_FOUNDATION = 3;
     public final static int STACKTYPE_TEMP = 4;
+    public final static int STACKTYPE_HIDDENDISPLAYSTOCK = 5;
 
     private Stack<Card> cards;
     public final int stackType;
@@ -60,6 +61,9 @@ public class CardStack implements IDrawable {
             }
         } else {
             g.drawImage(ImageLoader.emptySpotTexture, x, y, null);
+
+            if (stackType == STACKTYPE_HIDDENSTOCK)
+                g.drawImage(ImageLoader.redoSymbol, x + 15, y + 37, null);
         }
 
         calcBounds(x, y);
