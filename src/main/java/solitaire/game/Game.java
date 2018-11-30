@@ -1,3 +1,7 @@
+/*
+    Represents the current state of the game. Handles interaction when the cards are clicked on.
+ */
+
 package solitaire.game;
 
 import org.jetbrains.annotations.Nullable;
@@ -27,7 +31,14 @@ public class Game implements IDrawable {
     private transient Solitaire solitaire;
 
     public int moves;
+    public int seconds;
+    public int minutes;
 
+    /**
+     * Creates a new game with a reference to the controlling Solitaire instance
+     *
+     * @param solitaire the instance of Solitaire that started the game
+     */
     public Game(Solitaire solitaire) {
         loadedFrom = null;
         this.solitaire = solitaire;
@@ -35,10 +46,22 @@ public class Game implements IDrawable {
         initNewGame();
     }
 
+    /**
+     * Sets the reference to the controlling Solitaire instance
+     *
+     * @param solitaire the instance of Solitaire that started the game
+     */
     public void setSolitaire(Solitaire solitaire) {
         this.solitaire = solitaire;
     }
 
+    /**
+     * Draws the state of the game
+     *
+     * @param g The graphics instance to draw the game on to
+     * @param x The x coordinate of the top left corner to start drawing from
+     * @param y The y coordinate of the top left corner to start drawing from
+     */
     @Override
     public void draw(Graphics g, int x, int y) {
         hiddenStock.draw(g, x + 20, y + 10);
@@ -63,7 +86,12 @@ public class Game implements IDrawable {
 
     }
 
+    /**
+     * Sets the state of the game to that of a new game
+     */
     public void initNewGame() {
+        seconds = 0;
+        minutes = 0;
         moves = 0;
 
         highlightedStack = null;
@@ -103,6 +131,14 @@ public class Game implements IDrawable {
 
     }
 
+    /**
+     * Gets the instance of the CardStack that was clicked on
+     *
+     * @param clickedX The x coordinate of where the mouse was clicked
+     * @param clickedY The y coordinate of where the mouse was clicked
+     * @return The full stack that was clicked on and every card below the card that was clicked on, or null if no stack
+     * was clicked
+     */
     public @Nullable SelectedStackResult getSelectedCardstack(int clickedX, int clickedY) {
         //Check through all main piles, use an individual card version for the display stock pile
 
@@ -139,6 +175,13 @@ public class Game implements IDrawable {
         return null;
     }
 
+    /**
+     * Is called when the game display is clicked on. Handles selecting a stack or moving cards from the previously
+     * selected stack
+     *
+     * @param x The x coordinate of where the mouse was clicked
+     * @param y The y coordinate of where the mouse was clicked
+     */
     public void onClick(int x, int y) {
         if (hiddenStock.inBounds(x, y)) {
             cycleStock();
@@ -160,28 +203,8 @@ public class Game implements IDrawable {
                     switch (clickedStack.fullStack.stackType) {
                         case CardStack.STACKTYPE_MAIN:
                         case CardStack.STACKTYPE_DISPLAYSTOCK:
-                            internalStackMove(clickedStack);
-                            break;
                         case CardStack.STACKTYPE_FOUNDATION:
-                            if (highlightedStack.subStack.getCardCount() == 1) {
-                                Card cardBeingMoved = highlightedStack.subStack.getCard(0);
-
-                                if (clickedStack.fullStack.getCardCount() == 0) {
-                                    // If it's an ace
-                                    if (cardBeingMoved.val == 0) {
-                                        clickedStack.fullStack.appendStack(highlightedStack.subStack);
-                                        highlightedStack.fullStack.deletePartOfStack(highlightedStack.subStack);
-                                    }
-                                } else {
-                                    Card cardBeingMovedOnto = clickedStack.subStack.getCard(0);
-
-                                    if (cardBeingMoved.val == cardBeingMovedOnto.val + 1 &&
-                                            cardBeingMoved.suit == cardBeingMovedOnto.suit) {
-                                        clickedStack.fullStack.appendStack(highlightedStack.subStack);
-                                        highlightedStack.fullStack.deletePartOfStack(highlightedStack.subStack);
-                                    }
-                                }
-                            }
+                            conditionallyMoveStack(clickedStack);
                             break;
                     }
 
@@ -195,6 +218,10 @@ public class Game implements IDrawable {
         }
     }
 
+    /**
+     * Gets called when the game is won. Notifies the user they won and gives them the option of playing a new game
+     * or quitting
+     */
     private void onGameWon() {
         int response = JOptionPane.showConfirmDialog(null,
                 "Congratulations! You won! Would you like to start a new game?", "You won!",
@@ -203,14 +230,22 @@ public class Game implements IDrawable {
         if (response == JOptionPane.YES_OPTION) {
             startNewGame();
         } else {
-            solitaire.killDisplay();
+            System.exit(0);
         }
     }
 
+    /**
+     * Causes the controlling solitaire instance to start a new game
+     */
     public void startNewGame() {
         solitaire.displayGame(new Game(solitaire));
     }
 
+    /**
+     * Moves a card from the hidden stock to the display stock, and if the display stock is full moves a card from
+     * the display stock to the hidden display stock. If the hidden stock is empty moves all cards from the
+     * display stock and the hidden display stock back to the hidden stock.
+     */
     public void cycleStock() {
         if (hiddenStock.getCardCount() > 0) {
 
@@ -243,11 +278,15 @@ public class Game implements IDrawable {
         moves++;
     }
 
-    private void internalStackMove(SelectedStackResult refStack) {
+    /**
+     * Moves a CardStack to the highlightedStack if it is valid to move it there
+     *
+     * @param refStack The stack to move to the highlightedStack
+     */
+    private void conditionallyMoveStack(SelectedStackResult refStack) {
         if (highlightedStack.subStack.getCardCount() > 0) {
             if (canMoveStack(highlightedStack.subStack, refStack.fullStack)) {
                 refStack.fullStack.appendStack(highlightedStack.subStack);
-
                 highlightedStack.fullStack.deletePartOfStack(highlightedStack.subStack);
 
                 moves++;
@@ -255,30 +294,52 @@ public class Game implements IDrawable {
         }
     }
 
-    private boolean canMoveStack(CardStack movedStack, CardStack placedStack) {
-        boolean b = false;
-
-        if (placedStack.stackType == CardStack.STACKTYPE_MAIN) {
-            if (placedStack.getCardCount() == 0) {
-                Card attemptCard = movedStack.getCard(0);
-                if (attemptCard.val == 12 && attemptCard.isFaceUp()) { // If it's a king
-                    b = true;
-                }
+    /**
+     * Checks whether the receivingStack
+     *
+     * @param stackToMove    The stack that is potentially being moved
+     * @param receivingStack The stack that is having cards moved onto
+     * @return True if the stack can be moved
+     */
+    private boolean canMoveStack(CardStack stackToMove, CardStack receivingStack) {
+        if (receivingStack.stackType == CardStack.STACKTYPE_MAIN) {
+            if (receivingStack.getCardCount() == 0) {
+                Card attemptCard = stackToMove.getCard(0);
+                // If it's a king
+                return attemptCard.val == 12 && attemptCard.isFaceUp();
             } else {
-                Card destCard = placedStack.getCard(placedStack.getCardCount() - 1);
-                Card attemptCard = movedStack.getCard(0);
+                Card destCard = receivingStack.getCard(receivingStack.getCardCount() - 1);
+                Card attemptCard = stackToMove.getCard(0);
 
                 if (destCard.val == (attemptCard.val + 1) && attemptCard.isFaceUp()) {
-                    if (!destCard.isSameColor(attemptCard)) {
-                        b = true;
-                    }
+                    return !destCard.isSameColor(attemptCard);
+                }
+            }
+        } else if (receivingStack.stackType == CardStack.STACKTYPE_FOUNDATION) {
+            if (stackToMove.getCardCount() == 1) {
+                Card cardBeingMoved = stackToMove.getCard(0);
+
+                if (receivingStack.getCardCount() == 0) {
+                    // If it's an ace
+                    return cardBeingMoved.val == 0;
+                } else {
+                    Card cardBeingMovedOnto = receivingStack.getCard(receivingStack.getCardCount() - 1);
+
+                    return cardBeingMoved.val == cardBeingMovedOnto.val + 1 &&
+                            cardBeingMoved.suit == cardBeingMovedOnto.suit;
                 }
             }
         }
 
-        return b;
+        return false;
     }
 
+    /**
+     * Checks if the player has depleted the display stock and hidden stock and revealed every card in the main piles
+     * because if that has been done winning is inevitable
+     *
+     * @return True if the above conditions have been met
+     */
     private boolean checkWinConditions() {
         if (hiddenStock.getCardCount() != 0 || displayStock.getCardCount() != 0) {
             return false;
@@ -294,10 +355,19 @@ public class Game implements IDrawable {
         return true;
     }
 
+    /**
+     * The result of calling getSelectedCardstack. Represents a pair of CardStacks where one is contained within the other
+     */
     private class SelectedStackResult {
         public final CardStack fullStack;
         public final CardStack subStack;
 
+        /**
+         * Pairs two CardStacks together
+         *
+         * @param fullStack The stack containing the card that was selected
+         * @param subStack  The card that was selected and every card below it
+         */
         public SelectedStackResult(CardStack fullStack, CardStack subStack) {
             this.fullStack = fullStack;
             this.subStack = subStack;

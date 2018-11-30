@@ -3,41 +3,39 @@
  */
 package solitaire.graphics;
 
+import solitaire.game.Game;
+
 import javax.swing.JLabel;
 import java.awt.event.ActionEvent;
 
 public class Timer extends JLabel {
-    private int seconds;
-    private int minutes;
 
     /**
      * Initializer method that makes a Timer object and adds to minutes after 60 seconds and adds to seconds every seconds while seconds is less than 60. Then calls update label.
+     * @param game The game that this timer is counting for
      */
-    public Timer() {
-        seconds = 0;
-        minutes = 0;
-
+    public Timer(Game game) {
         javax.swing.Timer timer = new javax.swing.Timer(1000, (ActionEvent e) -> {
-            if (seconds == 59) {
-                seconds = 0;
-                minutes++;
+            if (game.seconds == 59) {
+                game.seconds = 0;
+                game.minutes++;
             } else {
-                seconds++;
+                game.seconds++;
             }
 
-            updateText();
+            updateText(game);
         });
         timer.setRepeats(true);
         timer.start();
 
-        updateText();
+        updateText(game);
     }
 
     /**
      * Updates the timer text label each second to the latest time.
      */
-    private void updateText() {
-        setText("Elapsed Time: " + minutes + ":" + (seconds < 10 ? "0" + seconds : seconds));
+    private void updateText(Game game) {
+        setText("Elapsed Time: " + game.minutes + ":" + (game.seconds < 10 ? "0" + game.seconds : game.seconds));
         repaint();
     }
 }
