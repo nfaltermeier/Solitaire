@@ -10,7 +10,7 @@ public class Timer extends JLabel {
     private int seconds;
     private int minutes;
 
-    /**Timer
+    /**
      * Initializer method that makes a Timer object and adds to minutes after 60 seconds and adds to seconds every seconds while seconds is less than 60. Then calls update label.
      */
     public Timer() {
@@ -33,7 +33,7 @@ public class Timer extends JLabel {
         updateText();
     }
 
-    /**updateText
+    /**
      * Updates the timer text label each second to the latest time.
      */
     private void updateText() {

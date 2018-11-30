@@ -26,7 +26,7 @@ public class Card implements IDrawable {
     public int lastY;
 
 
-    /**Card
+    /**
      * Initializer which sets the unique properties of the object based off the id. All card ID's are 0 - 51; values, and suits are formed from the ID.
       * @param id
      */
@@ -38,7 +38,7 @@ public class Card implements IDrawable {
         this.isFaceUp = false;
     }
 
-    /**draw
+    /**
      * Draws the card using the x and y coordinates.
      * @param g
      * @param x
@@ -60,7 +60,7 @@ public class Card implements IDrawable {
         lastY = y;
     }
 
-    /**setFaceDir
+    /**
      * Setter method that makes the card either face up or face down.
      * @param isUp
      */
@@ -68,7 +68,7 @@ public class Card implements IDrawable {
         this.isFaceUp = isUp;
     }
 
-    /**isFaceUp
+    /**
      * Getter method for face direction of card.
      * @return
      */
@@ -81,7 +81,7 @@ public class Card implements IDrawable {
         return bounds.contains(x, y);
     }
 
-    /**isSameColor
+    /**
      * Determines if this objects card color (red or black) is the same as the card color passed in.
      * Used for validating moves.
      * @param c
@@ -100,7 +100,7 @@ public class Card implements IDrawable {
         return true;
     }
 
-    /**equals
+    /**
      * Determines if this card's ID is the same as the card passed in.
      * @param o
      * @return
@@ -113,7 +113,7 @@ public class Card implements IDrawable {
         return id == card.id;
     }
 
-    /**hashCode
+    /**
      * Makes hash code representation of the card.
      * @return
      */
