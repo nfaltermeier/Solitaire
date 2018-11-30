@@ -1,3 +1,7 @@
+/*
+The card class holds data mostly unique data used to identity, draw, and perform comparisons on the card.
+ */
+
 package solitaire.game;
 
 import solitaire.graphics.IDrawable;
@@ -22,6 +26,10 @@ public class Card implements IDrawable {
     public int lastY;
 
 
+    /**Card
+     * Initializer which sets the unique properties of the object based off the id. All card ID's are 0 - 51; values, and suits are formed from the ID.
+      * @param id
+     */
     public Card(int id) {
         this.id = id;
         this.val = id % 13;
@@ -30,6 +38,12 @@ public class Card implements IDrawable {
         this.isFaceUp = false;
     }
 
+    /**draw
+     * Draws the card using the x and y coordinates.
+     * @param g
+     * @param x
+     * @param y
+     */
     @Override
     public void draw(Graphics g, int x, int y) {
         if (isFaceUp) {
@@ -46,10 +60,18 @@ public class Card implements IDrawable {
         lastY = y;
     }
 
+    /**setFaceDir
+     * Setter method that makes the card either face up or face down.
+     * @param isUp
+     */
     public void setFaceDir(boolean isUp) {
         this.isFaceUp = isUp;
     }
 
+    /**isFaceUp
+     * Getter method for face direction of card.
+     * @return
+     */
     public boolean isFaceUp() {
         return isFaceUp;
     }
@@ -59,6 +81,12 @@ public class Card implements IDrawable {
         return bounds.contains(x, y);
     }
 
+    /**isSameColor
+     * Determines if this objects card color (red or black) is the same as the card color passed in.
+     * Used for validating moves.
+     * @param c
+     * @return
+     */
     public boolean isSameColor(Card c) {
         switch (suit) {
             case 1:
@@ -72,6 +100,11 @@ public class Card implements IDrawable {
         return true;
     }
 
+    /**equals
+     * Determines if this card's ID is the same as the card passed in.
+     * @param o
+     * @return
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -80,6 +113,10 @@ public class Card implements IDrawable {
         return id == card.id;
     }
 
+    /**hashCode
+     * Makes hash code representation of the card.
+     * @return
+     */
     @Override
     public int hashCode() {
         return Objects.hash(id);

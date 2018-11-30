@@ -1,3 +1,6 @@
+/**
+ * Draws the toolbar and playing area of the window, loads saved games, and adds mouse listener.
+ */
 package solitaire.graphics;
 
 import com.google.gson.Gson;
@@ -20,6 +23,10 @@ import java.io.PrintWriter;
 
 public class GameDisplay extends JPanel {
 
+    /**
+     * Initializer method draws the game (and cards) based from the Game object passed in. Additionally, manages the fileIO for resuming a saved game and adds the mouse listener.
+     * @param game
+     */
     public GameDisplay(Game game) {
         // Shows all the stacks of cards, the background, and any UI components. The top level GUI component.
         setLayout(new BorderLayout());
@@ -86,7 +93,7 @@ public class GameDisplay extends JPanel {
             public void mouseReleased(MouseEvent e) {
                 int x = e.getX();
                 int y = e.getY();
-                //System.out.println("Released at (" + x + ", " + y + ")");
+
                 game.onClick(x, y);
                 repaint();
 
