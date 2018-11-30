@@ -63,7 +63,9 @@ public class CardStack implements IDrawable {
         }
 
         calcBounds(x, y);
+
     }
+
 
 
     public void addNewCard(int id) {
@@ -72,6 +74,9 @@ public class CardStack implements IDrawable {
     }
 
     public void solveFlipType(int flipType) {
+        if (getCardCount() == 0)
+            return;
+
         switch (flipType) {
             case FLIPTYPE_TOP:
                 for (int i = 0; i < cards.size() - 1; i++) {
@@ -123,15 +128,9 @@ public class CardStack implements IDrawable {
     }
 
     public void deletePartOfStack(CardStack c) {
-        int oldCount = this.getCardCount();
-
         this.cards.removeAll(c.cards);
 
-        int diffSum = oldCount - this.getCardCount();
-
-        if (this.getCardCount() > 0 && diffSum <= 1) { //mess with this until all stuff in a stack dont flip
-            this.solveFlipType(this.flipType);
-        }
+        solveFlipType(flipType);
     }
 
     public Card getCard(int index) {
@@ -141,4 +140,7 @@ public class CardStack implements IDrawable {
     public int getCardCount() {
         return this.cards.size();
     }
+
+
+
 }

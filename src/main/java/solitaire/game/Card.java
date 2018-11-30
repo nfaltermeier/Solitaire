@@ -63,6 +63,10 @@ public class Card implements IDrawable {
         this.isFaceUp = isUp;
     }
 
+    public boolean isFaceUp() {
+        return isFaceUp;
+    }
+
     public boolean inBounds(int x, int y) {
         Rectangle bounds = new Rectangle(lastX, lastY, ImageLoader.cardTexWidth, ImageLoader.cardTexHeight);
         return bounds.contains(x, y);
