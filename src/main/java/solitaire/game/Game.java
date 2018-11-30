@@ -6,7 +6,6 @@ import solitaire.graphics.IDrawable;
 import solitaire.graphics.ImageLoader;
 
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.io.File;
 import java.util.ArrayList;
@@ -19,6 +18,7 @@ public class Game implements IDrawable {
     private CardStack[] mainPiles;
     private CardStack hiddenStock;
     private CardStack displayStock;
+    private CardStack hiddenDisplayStock;
 
     private SelectedStackResult highlightedStack;
 
@@ -63,6 +63,7 @@ public class Game implements IDrawable {
 
     public void initNewGame() {
         highlightedStack = null;
+        hiddenDisplayStock = new CardStack(CardStack.FLIPTYPE_NONE, CardStack.STACKTYPE_HIDDENDISPLAYSTOCK);
 
         foundationStacks = new CardStack[4];
         mainPiles = new CardStack[7];
@@ -205,7 +206,6 @@ public class Game implements IDrawable {
     }
 
     public void cycleStock() {
-
         if (hiddenStock.getCardCount() > 0) {
 
             // grab bottom card and add it to temp stack while also removing it from the
@@ -222,12 +222,16 @@ public class Game implements IDrawable {
                 // Remove bottom card and put it back into hiddenstock
                 CardStack tempStack2 = displayStock.getSubstack(0, 1);
                 displayStock.deletePartOfStack(tempStack2);
-                hiddenStock.appendStack(tempStack2);
-
+                hiddenDisplayStock.appendStack(tempStack2);
             }
 
             hiddenStock.solveFlipType(CardStack.FLIPTYPE_NONE);
-
+        } else if (hiddenDisplayStock.getCardCount() > 0) {
+            hiddenStock.appendStack(hiddenDisplayStock);
+            hiddenStock.appendStack(displayStock);
+            hiddenStock.solveFlipType(CardStack.FLIPTYPE_NONE);
+            hiddenDisplayStock.deletePartOfStack(hiddenDisplayStock);
+            displayStock.deletePartOfStack(displayStock);
         }
     }
 
