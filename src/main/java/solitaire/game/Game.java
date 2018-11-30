@@ -266,9 +266,15 @@ public class Game implements IDrawable {
     }
 
     private boolean checkWinConditions() {
-        for (int i = 0; i < foundationStacks.length; i++) {
-            if (foundationStacks[i].getCardCount() != 12) {
-                return false;
+        if(hiddenStock.getCardCount() != 0 || displayStock.getCardCount() != 0){
+            return false;
+        }
+
+        for(CardStack stack : mainPiles){
+            for(int i=0;i<stack.getCardCount();i++){
+                if(!stack.getCard(i).isFaceUp()){
+                    return false;
+                }
             }
         }
         return true;
