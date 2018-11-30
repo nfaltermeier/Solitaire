@@ -277,8 +277,6 @@ public class Game implements IDrawable {
                 }
             }
         }
-
-
         return true;
     }
 
